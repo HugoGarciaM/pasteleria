@@ -117,7 +117,7 @@ $products=Product::all();
 </x-modal>
 
 <x-modal id="product" title="Producto">
-    <form method="post" action="{{route('admin.product.create')}}">
+    <form method="post" action="{{route('admin.product.create')}}" enctype="multipart/form-data">
         @csrf
         <div class="input-group">
             <span class="input-group-text">Nombre</span>
@@ -127,6 +127,11 @@ $products=Product::all();
             <span class="input-group-text">Precio</span>
             <input type="number" step=".01" name="price" class="form-control">
         </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Descripcion</label>
+            <textarea class="form-control" name="description" rows="3"></textarea>
+        </div>
+
         <div class="input-group">
             <span class="input-group-text">Categoria</span>
             <select class="form-select" name="category">
@@ -135,6 +140,10 @@ $products=Product::all();
                 <option value="{{$category->id}}">{{$category->name}}</option>
                 @endforeach
             </select>
+        </div>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Imagen</label>
+            <input class="form-control" type="file" id="formFile" name="picture">
         </div>
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="status" value="0">
