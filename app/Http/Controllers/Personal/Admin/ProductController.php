@@ -7,6 +7,7 @@ use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
@@ -34,11 +35,13 @@ class ProductController extends Controller
         $product=new Product([
             'name'=>$request->name,
             'price'=>$request->price,
+            'description'=>$request->description,
             'category_id'=>$request->category,
             'status'=>$request->status!=null ? Status::ENABLE : Status::DISABLE
         ]);
 
         if($product->save()){
+            Storage::disk('imgProduct')->putFileAs($request->file('picture'),$product->id);
             return redirect(route('admin.product'));
         }else{
             return "no se pudo crear";
