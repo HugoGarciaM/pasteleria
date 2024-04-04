@@ -34,7 +34,9 @@ class CategoryController extends Controller
     }
 
     public function update(Request $request,Category $category){
-        //return $category;
+        $request->validate([
+            'name'=>'required'
+        ]);
         $category->name=$request->name;
         $category->save();
         return redirect(route('admin.product'));
