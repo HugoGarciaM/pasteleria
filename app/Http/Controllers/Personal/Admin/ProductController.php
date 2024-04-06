@@ -41,7 +41,31 @@ class ProductController extends Controller
         ]);
 
         if($product->save()){
-            Storage::disk('imgProduct')->putFileAs($request->file('picture'),$product->id);
+            if($request->file('picture')!=null) Storage::disk('imgProduct')->putFileAs($request->file('picture'),$product->id);
+            return redirect(route('admin.product'));
+        }else{
+            return "no se pudo crear";
+        }
+    }
+
+    public function update(Request $request,Product $product){
+        $request->validate([
+            'name'=>'required',
+            'price'=>'required',
+            'category'=>'nullable|exists:categories,id',
+            'status'=>Rule::enum(Status::class)
+        ]);
+        $product->name=$request->name;
+        $product->price=$request->price;
+        $product->description=$request->description;
+        $product->category_id=$request->category;
+        $product->status=$request->status!=null ? Status::ENABLE : Status::DISABLE;
+        if($product->save()){
+            if($request->file('picture')!=null){
+                if(Storage::disk('imgProduct')->exists($product->id))
+                    Storage::disk('imgProduct')->delete($product->id);
+                Storage::disk('imgProduct')->putFileAs($request->file('picture'),$product->id);
+            }
             return redirect(route('admin.product'));
         }else{
             return "no se pudo crear";
@@ -50,5 +74,9 @@ class ProductController extends Controller
 
     public function delete(Product $product){
         Product::destroy($product);
+    }
+
+    public function showImg($id){
+        return Storage::disk('imgProduct')->exists($id) ? Storage::disk('imgProduct')->get($id) : Storage::disk('imgProduct')->get('Image_not_available.png');
     }
 }

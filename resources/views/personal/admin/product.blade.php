@@ -16,7 +16,7 @@ $products=Product::all();
 
 @section('content')
 <div class="navbar justify-content-end">
-    <button class="btn btn-success" onclick="prod" data-bs-toggle="modal" data-bs-target="#product">
+    <button class="btn btn-success" onclick="cleanPreview()" data-bs-toggle="modal" data-bs-target="#product">
         <i class="fa fa-plus"></i>
         Nuevo Producto
     </button>
@@ -45,7 +45,14 @@ $products=Product::all();
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-primary">Editar</button>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#product-update"
+                                onclick="updateProduct({{$product->id}},
+                                '{{$product->name}}',
+                                {{$product->price}},
+                                '{{$product->category}}',
+                                '{{$product->status}}',
+                                '{{$product->description}}'
+                                )">Editar</button>
                     </td>
                 </tr>
                 @endforeach
@@ -143,10 +150,53 @@ $products=Product::all();
         </div>
         <div class="mb-3">
             <label for="formFile" class="form-label">Imagen</label>
-            <input class="form-control" type="file" id="formFile" name="picture">
+            <input class="form-control" type="file" id="formFile" name="picture" onchange="updateImg('formFile','preview',true)">
+            <img class="img-fluid d-none" alt="Loading" id="preview">
         </div>
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="status" value="0">
+            <label class="form-check-label">Estado</label>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" >Guardar</button>
+        </div>
+    </form>
+</x-modal>
+
+<x-modal title="Actualizar Producto" id="product-update">
+    <form method="post" action="" id="form-update-product" enctype="multipart/form-data">
+        @method('PUT')
+        @csrf
+        <div class="input-group">
+            <span class="input-group-text">Nombre</span>
+            <input type="text" name="name" id="product-name" class="form-control">
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">Precio</span>
+            <input type="number" step=".01" name="price" id="product-price" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Descripcion</label>
+            <textarea class="form-control" name="description" id="product-description" rows="3"></textarea>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text">Categoria</span>
+            <select class="form-select" name="category" id="product-category">
+                <option selected value="">Ninguno</option>
+                @foreach ($categories as $category)
+                <option value="{{$category->id}}">{{$category->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Imagen</label>
+            <input class="form-control" type="file" id="formfile" name="picture" onchange="updateImg('formfile','product-picture')">
+            <img class="img-fluid" alt="Loading" id="product-picture">
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="status" value="0" id="product-status">
             <label class="form-check-label">Estado</label>
         </div>
         <div class="modal-footer">
@@ -198,8 +248,39 @@ function updateCategory(id,name){
     form=document.getElementById('form-update-category');
     form.action='{{route('admin.category.update','')}}'+'/'+id;
     inp=document.getElementById('category-name');
-    console.log(name);
     inp.value=name;
+}
+
+function updateProduct(id,name,price,category,status,description){
+    form=document.getElementById('form-update-product');
+    form.action='{{route('admin.product.update','')}}'+'/'+id;
+    document.getElementById('product-name').value=name;
+    document.getElementById('product-price').value=price;
+    document.getElementById('product-description').value=description;
+    document.getElementById('product-category').value= (category.length===0 ? "" : (JSON.parse(category))["id"]);
+    document.getElementById('product-status').checked = status ==1 ? true : false;
+    document.getElementById('product-picture').src='{{route('admin.product.img','')}}'+'/'+id;
+}
+
+function updateImg(inputId, imgId,hidden=false) {
+    const input = document.getElementById(inputId);
+    const img = document.getElementById(imgId);
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            img.src = e.target.result;
+        };
+
+        reader.readAsDataURL(input.files[0]);
+        if (hidden) img.classList.remove('d-none');
+    }
+}
+
+function cleanPreview(){
+    document.getElementById('preview').src="";
+    document.getElementById('preview').classList.add('d-none');
 }
 </script>
 @endsection

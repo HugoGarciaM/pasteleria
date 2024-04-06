@@ -22,6 +22,9 @@ Route::controller(CategoryController::class)->group(function(){
 
 Route::controller(ProductController::class)->group(function(){
     Route::post('/product','create')->name('admin.product.create');
+    Route::put('/product/update/{product}','update')->name('admin.product.update');
+    Route::post('/product/delete/{product}','delete')->name('admin.product.delete');
+    Route::get('/product/img/{id}','showImg')->name('admin.product.img');
 });
 
 
