@@ -10,8 +10,8 @@
 use App\Models\Category;
 use App\Models\Product;
 use App\Enums\Status;
-$categories=Category::all();
-$products=Product::all();
+$categories=Category::paginate(10);
+$products=Product::paginate(10);
 @endphp
 
 @section('content')
@@ -58,6 +58,9 @@ $products=Product::all();
                 @endforeach
             </tbody>
         </table>
+        <div class="navbar">
+            {{$products->links()}}
+        </div>
     </div>
 </div>
 <div class="navbar justify-content-end">
@@ -92,6 +95,9 @@ $products=Product::all();
                 @endforeach
             </tbody>
         </table>
+        <div class="navbar">
+            {{$categories->links()}}
+        </div>
     </div>
 </div>
 

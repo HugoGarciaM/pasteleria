@@ -3,6 +3,7 @@
 use App\Http\Controllers\Personal\DashboardController;
 use App\Http\Controllers\Personal\Admin\CategoryController;
 use App\Http\Controllers\Personal\Admin\ProductController;
+use App\Http\Controllers\Personal\Admin\ProductDayController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -25,6 +26,13 @@ Route::controller(ProductController::class)->group(function(){
     Route::put('/product/update/{product}','update')->name('admin.product.update');
     Route::post('/product/delete/{product}','delete')->name('admin.product.delete');
     Route::get('/product/img/{id}','showImg')->name('admin.product.img');
+});
+
+Route::controller(ProductDayController::class)->group(function(){
+    Route::post('/date','newBatch')->name('admin.batch.create');
+    Route::post('/date/product/create/{date}','create')->name('admin.batch.product.create');
+    Route::post('/date/product/delete/{id}','delete')->name('admin.batch.product.delete');
+    Route::post('/date/product/update/{detail}','update')->name('admin.batch.product.update');
 });
 
 

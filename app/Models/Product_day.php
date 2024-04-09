@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product_day extends Model
 {
     use HasFactory;
+    public $timestamps=null;
 
     public function date(){
         return $this->belongsTo(Date::class);

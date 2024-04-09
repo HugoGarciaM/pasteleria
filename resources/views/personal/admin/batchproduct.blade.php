@@ -7,21 +7,39 @@
 
 @section('content')
 <div class="navbar justify-content-end">
-    <button class="btn btn-primary nav-item">
-        <i class="fa fa-clipboard"></i> Nuevo Lote
-    </button>
+    <form method="post" action="{{route('admin.batch.create')}}">
+        @csrf
+        <input value="{{date('Y-m-d')}}" name="date" class="d-none">
+        <button class="btn btn-primary nav-item" type="submit">
+            <i class="fa fa-clipboard"></i> Nuevo Lote
+        </button>
+    </form>
 </div>
+
+@php
+use App\Models\Date;
+use App\Models\Product;
+
+$dates=Date::orderBy('event_day','desc')->paginate();
+$products=Product::all();
+@endphp
+
+@foreach ($dates as $day)
+
 
 <div class="card">
     <div class="card-body">
         <div class="navbar">
             <div>
-                <h3>{{date('d-m-Y')}}</h3>
+                {{-- <h3>{{date('d-m-Y')}}</h3> --}}
+                <h3>{{$day->event_day}}</h3>
             </div>
             <div class="justify-content-end">
-                <button class="btn btn-success nav-item">
+                @if ($day->event_day==date('Y-m-d'))
+                <button class="btn btn-success nav-item" data-bs-toggle='modal' data-bs-target='#addProduct' onclick="selectDate('form-create','{{$day->id}}')">
                     <i class="fa fa-plus"></i> Nuevo Producto
                 </button>
+                @endif
             </div>
         </div>
         <hr>
@@ -36,15 +54,111 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach ($day->products as $detail)
                 <tr>
-                    <td>{{""}}</td>
-                    <td>{{""}}</td>
-                    <td>{{""}}</td>
-                    <td>{{""}}</td>
-                    <td><button class="btn btn-primary">editar</button></td>
+                    <td>{{$detail->id}}</td>
+                    <td>{{$detail->product->name}}</td>
+                    <td>{{$detail->product->price}}</td>
+                    <td>{{$detail->quantity}}</td>
+                    @if ($day->event_day==date('Y-m-d'))
+                    <td>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProduct" onclick="editUpdate('editP','{{$detail->product->name}}',{{$detail->id}},'form-edit')">editar</button>
+                        <form class="d-inline" method="post" action="{{route('admin.batch.product.delete',$detail->id)}}">
+                            @csrf
+                            <button class="btn btn-danger"  type="submit">eliminar</button>
+                        </form>
+                    </td>
+                    @endif
                 </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
 </div>
+
+@endforeach
+
+<x-modal title="actualizacion" id="editProduct">
+    <form method="post" action="" id="form-edit">
+        @csrf
+        <div class="input-group">
+            <span class="input-group-text">Producto</span>
+            <input class="form-control" id="editP" disabled>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">Cantidad</span>
+            <input class="form-control" name="quantity" type="number" min="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" >Guardar</button>
+        </div>
+    </form>
+</x-modal>
+
+<x-modal title="Nuevo Producto" id="addProduct">
+    <form method="post" action="#" id="form-create">
+        @csrf
+        <div class="input-group">
+            <span class="input-group-text">Id</span>
+            <input class="form-control" type="number" id="idProduct" name="idp">
+            <a class="btn btn-primary" onclick="searchSelect('select','idProduct')">
+                <i class=" fa fa-search"></i>
+            </a>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">Nombre</span>
+            <select class="form-select" id="select" onchange="searchSelect('idProduct','select')">
+                @foreach ($products as $product)
+                <option value="{{$product->id}}">{{$product->name}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">cantidad</span>
+            <input class="form-control" name="quantity" type="number" min="1">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary" >Guardar</button>
+        </div>
+    </form>
+</x-modal>
+
+@error('date')
+<x-toast title="Error" id="errorDate" colorscheme="text-bg-danger">
+    {{$message}}
+</x-toast>
+@enderror
+
+@error('quantity')
+<x-toast title="Error" id="errorQuantity" colorscheme="text-bg-danger">
+    {{$message}}
+</x-toast>
+@enderror
+
+@endsection
+
+
+@section('css')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+@endsection
+
+@section('js')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<script>
+function searchSelect($selector,$value){
+    select=document.getElementById($selector).value=document.getElementById($value).value;
+}
+
+function selectDate(form,day){
+    document.getElementById(form).action="{{route('admin.batch.product.create','')}}"+"/"+day;
+}
+
+function editUpdate(id,value,idp,form){
+    document.getElementById(id).value=value;
+    document.getElementById(form).action="{{route('admin.batch.product.update','')}}"+"/"+idp;
+}
+</script>
 @endsection
