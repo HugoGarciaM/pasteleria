@@ -367,7 +367,7 @@ return [
                 ],
                 [
                     "text"=>"Empleado",
-                    "url"=>"#",
+                    "route"=>"admin.employee",
                     "icon"=>"fa fa-user-tie"
                 ],
                 [
@@ -419,6 +419,21 @@ return [
      */
 
     'plugins' => [
+        'Bootstrap' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css'
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'
+                ]
+            ]
+        ],
         'Datatables' => [
             'active' => false,
             'files' => [
@@ -436,6 +451,26 @@ return [
                     'type' => 'css',
                     'asset' => false,
                     'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
+                ],
+            ],
+        ],
+        'Datatable' => [
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/2.0.3/js/dataTables.min.js',
+                ],
+                // [
+                //     'type' => 'js',
+                //     'asset' => false,
+                //     'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
+                // ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css',
                 ],
             ],
         ],

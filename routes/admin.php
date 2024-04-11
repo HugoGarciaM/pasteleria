@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Personal\DashboardController;
 use App\Http\Controllers\Personal\Admin\CategoryController;
+use App\Http\Controllers\Personal\Admin\EmployeeController;
 use App\Http\Controllers\Personal\Admin\ProductController;
 use App\Http\Controllers\Personal\Admin\ProductDayController;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,7 @@ Route::controller(DashboardController::class)->group(function(){
     Route::get('/','index')->name('admin');
     Route::get('/batch','batch')->name('admin.batch');
     Route::get('/product','product')->name('admin.product');
+    Route::get('/employee','employee')->name('admin.employee');
 });
 
 
@@ -35,5 +37,8 @@ Route::controller(ProductDayController::class)->group(function(){
     Route::post('/date/product/update/{detail}','update')->name('admin.batch.product.update');
 });
 
+Route::controller(EmployeeController::class)->group(function(){
+    Route::post('/employee/create','create')->name('admin.employee.create');
+});
 
 ?>

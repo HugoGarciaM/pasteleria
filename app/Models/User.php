@@ -8,6 +8,7 @@ use App\Enums\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -20,6 +21,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
         'email',
         'password',
         'role'
@@ -47,5 +49,19 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => Role::class
         ];
+    }
+
+    public function name():Attribute{
+        return new Attribute(
+            get: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => strtoupper($value)
+        );
+    }
+
+    public function surname():Attribute{
+        return new Attribute(
+            get: fn($value) => ucwords(strtolower($value)),
+            set: fn($value) => strtoupper($value)
+        );
     }
 }
