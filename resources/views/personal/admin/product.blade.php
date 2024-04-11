@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('title','Producto')
+@section('plugins.Datatable',true)
 
 @section('content_header')
 <h1>Producto</h1>
@@ -72,7 +73,7 @@ $products=Product::paginate(10);
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Lista Categorias</h5>
-        <table class="table">
+        <table class="table" id="tableCategory">
             <thead>
                 <tr>
                     <th>Id</th>
@@ -243,13 +244,18 @@ $products=Product::paginate(10);
 
 @endsection
 
-@section('css')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-@endsection
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script>
+new DataTable('#tableCategory',{
+    columnDefs: [
+        { targets: [2], orderable: false, searchable: false }
+    ],
+    paging : false,
+    language : {search : 'Filtrar:'}
+});
+document.getElementById('tableCategory_info').classList.add('d-none')
+
 function updateCategory(id,name){
     form=document.getElementById('form-update-category');
     form.action='{{route('admin.category.update','')}}'+'/'+id;

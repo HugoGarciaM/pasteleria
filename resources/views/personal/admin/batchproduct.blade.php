@@ -32,7 +32,7 @@ $products=Product::all();
         <div class="navbar">
             <div>
                 {{-- <h3>{{date('d-m-Y')}}</h3> --}}
-                <h3>{{$day->event_day}}</h3>
+                <h5>{{$day->event_day}}</h5>
             </div>
             <div class="justify-content-end">
                 @if ($day->event_day==date('Y-m-d'))
@@ -139,14 +139,7 @@ $products=Product::all();
 
 @endsection
 
-
-@section('css')
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-@endsection
-
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
 <script>
 function searchSelect($selector,$value){
     select=document.getElementById($selector).value=document.getElementById($value).value;
