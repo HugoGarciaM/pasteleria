@@ -39,6 +39,10 @@ Route::controller(ProductDayController::class)->group(function(){
 
 Route::controller(EmployeeController::class)->group(function(){
     Route::post('/employee/create','create')->name('admin.employee.create');
+    Route::post('/employee/update/{user}','update')->name('admin.employee.update');
+    Route::post('/employee/delete/{id}','delete')->name('admin.employee.delete');
 });
+
+// Route::controller();
 
 ?>
