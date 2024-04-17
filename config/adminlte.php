@@ -65,7 +65,8 @@ return [
 
     'logo' => '<b>Pasteleria</b>Pepita',
     // 'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img' => url('/storage/logo.png'),
+    // 'logo_img' => storage_path('app/public/logo.png'),
+    'logo_img' => 'storage/logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -115,7 +116,7 @@ return [
         'mode' => 'fullscreen',
         'img' => [
             // 'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'path' => url('/storage/logo.png'),
+            'path' => 'storage/logo.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
