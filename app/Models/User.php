@@ -20,8 +20,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'surname',
+        'person_ci',
         'email',
         'password',
         'role'
@@ -51,17 +50,21 @@ class User extends Authenticatable
         ];
     }
 
-    public function name():Attribute{
-        return new Attribute(
-            get: fn($value) => ucwords(strtolower($value)),
-            set: fn($value) => strtoupper($value)
-        );
+    public function person(){
+        return $this->hasOne(Person::class,'ci','person_ci');
     }
 
-    public function surname():Attribute{
-        return new Attribute(
-            get: fn($value) => ucwords(strtolower($value)),
-            set: fn($value) => strtoupper($value)
-        );
-    }
+    // public function name():Attribute{
+    //     return new Attribute(
+    //         get: fn($value) => ucwords(strtolower($value)),
+    //         set: fn($value) => strtoupper($value)
+    //     );
+    // }
+    //
+    // public function surname():Attribute{
+    //     return new Attribute(
+    //         get: fn($value) => ucwords(strtolower($value)),
+    //         set: fn($value) => strtoupper($value)
+    //     );
+    // }
 }

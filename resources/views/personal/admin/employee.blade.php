@@ -8,7 +8,7 @@
 @php
 use App\Models\User;
 use App\Enums\Role;
-$employees=User::paginate(10);
+$employees=User::whereBetween('role',[1,2])->paginate(10);
 $i=0;
 @endphp
 
@@ -25,9 +25,8 @@ $i=0;
         <table id="myTable" class="table table-striped" style="with:100%">
             <thead>
                 <tr>
-                    <th>Id</th>
-                    <th>Apellido</th>
-                    <th>Nombre</th>
+                    <th>CI</th>
+                    <th>Apellido y Nombre</th>
                     <th>Email</th>
                     <th>Rol</th>
                 </tr>
@@ -35,9 +34,9 @@ $i=0;
             <tbody>
                 @foreach ($employees as $employee)
                 <tr id="tr{{$i++}}">
-                    <td>{{$employee->id}}</td>
-                    <td>{{$employee->surname}}</td>
-                    <td>{{$employee->name}}</td>
+                    <td class="d-none">{{$employee->id}}</td>
+                    <td>{{$employee->person_ci}}</td>
+                    <td>{{$employee->person->name}}</td>
                     <td>{{$employee->email}}</td>
                     <td>{{($employee->role == Role::ADMIN ? 'Gerente' : 'Personal')}}</td>
                     <td>
@@ -67,11 +66,11 @@ $i=0;
     <form  id="form-employee" method="post" action="{{route('admin.employee.create')}}">
         @csrf
         <div class="input-group">
-            <span class="input-group-text">Apellido</span>
-            <input class="form-control" type="text" name="surname" id="surname">
+            <span class="input-group-text">CI</span>
+            <input class="form-control" type="text" name="ci" id="ci">
         </div>
         <div class="input-group">
-            <span class="input-group-text">Nombre</span>
+            <span class="input-group-text">Apellido y Nombre</span>
             <input class="form-control" type="text" name="name" id="name">
         </div>
         <div class="input-group">
@@ -103,7 +102,7 @@ $i=0;
     {{$message}}
 </x-toast>
 @enderror
-@error('surname')
+@error('ci')
 <x-toast title="Error" id="errorSurname" colorscheme="text-bg-danger">
     {{$message}}
 </x-toast>
@@ -120,10 +119,11 @@ $i=0;
 <script>
     new DataTable('#myTable', {
     columnDefs: [
-        { targets: [5], orderable: false, searchable: false }
+        { targets: [4], orderable: false, searchable: false }
     ],
-    columns: [{ width: '5%' },{width:'18%'}, {width:'17%'},{width:'30%'}, {width:'10%'},{with:'20%'}],
+    {{-- columns: [{ width: '5%' },{width:'18%'}, {width:'17%'},{width:'30%'}, {width:'10%'}], --}}
     paging:false,
+    scrollX=true
     });
     document.getElementById('myTable_info').classList.add('d-none');
 </script>
@@ -134,15 +134,17 @@ function typeForm(id,r=null){
     if(r==null){
         document.getElementById('div-password').classList.add('d-none');
         form.action="{{route('admin.employee.create')}}";
+        document.getElementById('ci').value=null;
+        document.getElementById('ci').readOnly=false;
         document.getElementById('name').value=null;
-        document.getElementById('surname').value=null;
         document.getElementById('email').value=null;
         document.getElementById('role').value=2;
     }else{
+        document.getElementById('ci').readOnly=true;
         document.getElementById('div-password').classList.remove('d-none');
         let row = document.getElementById(r);
         let cells = row.children;
-        let v=['surname','name','email','role'];
+        let v=['ci','name','email','role'];
         for(i=1;i<cells.length-1;i++){
             if(i==4)
                 document.getElementById(v[i-1]).value=cells[i].textContent==='Gerente' ? 1 : 2;

@@ -21,7 +21,6 @@ return new class extends Migration
             $table->unsignedBigInteger('detail_pay_id');
             $table->timestamps();
 
-            $table->foreign('customer')->references('id')->on('users');
             $table->foreign('seller')->references('id')->on('users');
             $table->foreign('detail_pay_id')->references('id')->on('detail_pays');
         });
