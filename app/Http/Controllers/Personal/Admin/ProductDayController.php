@@ -30,7 +30,7 @@ class ProductDayController extends Controller
 
     public function create(Request $request,$date){
         $request->validate([
-            'quantity' => 'required|number|min:1'
+            'quantity' => 'required|integer|min:1'
         ]);
         $product=new Product_day();
         $product->product_id=$request->idp;
