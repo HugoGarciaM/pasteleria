@@ -375,7 +375,7 @@ return [
                 ],
                 [
                     "text"=>"Cliente",
-                    "url"=>"#",
+                    "route"=>"admin.customer",
                     "icon"=>"fa fa-user"
                 ],
                 [

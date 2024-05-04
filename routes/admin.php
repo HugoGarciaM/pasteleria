@@ -5,14 +5,26 @@ use App\Http\Controllers\Personal\Admin\CategoryController;
 use App\Http\Controllers\Personal\Admin\EmployeeController;
 use App\Http\Controllers\Personal\Admin\ProductController;
 use App\Http\Controllers\Personal\Admin\ProductDayController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// prueba de creacion de cookies
+// Route::get('/test',function(){
+//     return response('<h1>hola como estas</h1>')->withCookie('miCookie','cristian',1);
+// });
+//
+//
+// Route::get('/ver',function(Request $request){
+//     $c=$request->cookie('miCookie');
+//     return response("<h1>$c</h1>")->withCookie('miCookie','cristian',1);
+// });
 
 Route::controller(DashboardController::class)->group(function(){
     Route::get('/','index')->name('admin');
     Route::get('/batch','batch')->name('admin.batch');
     Route::get('/product','product')->name('admin.product');
     Route::get('/employee','employee')->name('admin.employee');
+    Route::get('/customer','customer')->name('admin.customer');
 });
 
 
