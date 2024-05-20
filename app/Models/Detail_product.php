@@ -9,6 +9,14 @@ class Detail_product extends Model
 {
     use HasFactory;
 
+    public $timestamps=false;
+
+    public $fillable=[
+        'product_id',
+        'price',
+        'quantity'
+    ];
+
     public function transaction(){
         return $this->belongsTo(Transaction::class);
     }

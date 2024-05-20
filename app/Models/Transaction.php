@@ -11,11 +11,11 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    public function customers(){
+    public function customer(){
         return $this->belongsTo(User::class,'customer','id');
     }
 
-    public function sellers(){
+    public function seller(){
         return $this->belongsTo(User::class,'seller','id');
     }
 
