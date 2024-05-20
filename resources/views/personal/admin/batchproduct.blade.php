@@ -10,7 +10,7 @@
     <form method="post" action="{{route('admin.batch.create')}}">
         @csrf
         <input value="{{date('Y-m-d')}}" name="date" class="d-none">
-        <button class="btn btn-primary nav-item" type="submit">
+        <button class="btn btn-success nav-item" type="submit">
             <i class="fa fa-clipboard"></i> Nuevo Lote
         </button>
     </form>
@@ -21,7 +21,7 @@ use App\Models\Date;
 use App\Models\Product;
 
 $dates=Date::orderBy('event_day','desc')->paginate();
-$products=Product::all();
+$products=Product::where('status',1)->get();
 @endphp
 
 @foreach ($dates as $day)
@@ -101,7 +101,7 @@ $products=Product::all();
         @csrf
         <div class="input-group">
             <span class="input-group-text">Id</span>
-            <input class="form-control" type="number" id="idProduct" name="idp">
+            <input class="form-control" type="number" id="idProduct" name="idp" value="1">
             <a class="btn btn-primary" onclick="searchSelect('select','idProduct')">
                 <i class=" fa fa-search"></i>
             </a>
@@ -125,6 +125,13 @@ $products=Product::all();
     </form>
 </x-modal>
 
+
+@error('idp')
+<x-toast title="Error" id="errorIdp" colorscheme="text-bg-danger">
+    {{$message}}
+</x-toast>
+@enderror
+
 @error('date')
 <x-toast title="Error" id="errorDate" colorscheme="text-bg-danger">
     {{$message}}
@@ -142,7 +149,7 @@ $products=Product::all();
 @section('js')
 <script>
 function searchSelect($selector,$value){
-    select=document.getElementById($selector).value=document.getElementById($value).value;
+    document.getElementById($selector).value=document.getElementById($value).value;
 }
 
 function selectDate(form,day){

@@ -14,7 +14,7 @@ $customers=Person::paginate(10);
 @section('content')
 <div class="card">
     <div class="card-body">
-        <table class="table-striped table display" id="table">
+        <table class="table-striped table display" id="table" style="width: 100%;">
             <thead>
                 <tr>
                     <th>CI</th>
@@ -40,7 +40,8 @@ $customers=Person::paginate(10);
 <script>
 new DataTable('#table',
     {
-        paging:false
+        paging:false,
+        responsive:true
     });
 document.getElementById('table_info').classList.add('d-none');
 </script>

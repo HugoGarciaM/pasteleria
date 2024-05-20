@@ -22,9 +22,10 @@ $i=0;
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Lista Empleados</h5>
-        <table id="myTable" class="table table-striped" style="with:100%">
+        <table id="myTable" class="table table-striped nowrap" style="width:100%">
             <thead>
                 <tr>
+                    {{-- <th class="d-none">Id</th> --}}
                     <th>CI</th>
                     <th>Apellido y Nombre</th>
                     <th>Email</th>
@@ -34,17 +35,17 @@ $i=0;
             <tbody>
                 @foreach ($employees as $employee)
                 <tr id="tr{{$i++}}">
-                    <td class="d-none">{{$employee->id}}</td>
+                    {{-- <td class="d-none">{{$employee->id}}</td> --}}
                     <td>{{$employee->person_ci}}</td>
                     <td>{{$employee->person->name}}</td>
                     <td>{{$employee->email}}</td>
                     <td>{{($employee->role == Role::ADMIN ? 'Gerente' : 'Personal')}}</td>
                     <td>
                         <div>
-                            <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#modalCreate" onclick="typeForm('form-employee','tr{{$i-1}}')">Editar</button>
-                            <form class="d-inline" action="{{route('admin.employee.delete',$employee->id)}}" method="post">
+                            <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#modalCreate" onclick="typeForm('form-employee','tr{{$i-1}}',{{$employee->id}})">Editar</button>
+                            <form class="d-inline"  id="drop{{$i}}" action="{{route('admin.employee.delete',$employee->id)}}" method="post">
                                 @csrf
-                                <button class="btn btn-danger" type="submit">Eliminar</button>
+                                <button class="btn btn-danger" type="button" onclick="drop('drop{{$i}}')">Eliminar</button>
                             </form>
                         </div>
                     </td>
@@ -53,12 +54,6 @@ $i=0;
             </tbody>
         </table>
         {{$employees->links()}}
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Horario</h5>
     </div>
 </div>
 
@@ -117,19 +112,46 @@ $i=0;
 
 @section('js')
 <script>
-    new DataTable('#myTable', {
-    columnDefs: [
-        { targets: [4], orderable: false, searchable: false }
-    ],
-    {{-- columns: [{ width: '5%' },{width:'18%'}, {width:'17%'},{width:'30%'}, {width:'10%'}], --}}
-    paging:false,
-    scrollX=true
-    });
-    document.getElementById('myTable_info').classList.add('d-none');
+new DataTable('#myTable', {
+scrollX:true,
+columnDefs:[
+    {targets:[4],orderable:false,searchable:false},
+],
+paging:false,
+language : {search : 'Filtrar:'},
+responsive:true
+});
+document.getElementById('myTable_info').classList.add('d-none');
 </script>
 
 <script>
-function typeForm(id,r=null){
+function drop(form) {
+    form=document.getElementById(form);
+    Swal.fire({
+    title: "Estas Seguro?",
+        text: "Estas a punto de Eliminar un usuario",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+    if (result.isConfirmed) {
+            Swal.fire({
+                title: "Elimido!",
+                text: "El usuario fue Elimido Correctamente.",
+                icon: "success"
+    }).then((result)=>{
+        if(result.isConfirmed) form.submit();
+    });
+        }
+    });
+}
+</script>
+
+<script>
+function typeForm(id,r=null,idu){
     let form=document.getElementById(id);
     if(r==null){
         document.getElementById('div-password').classList.add('d-none');
@@ -145,13 +167,13 @@ function typeForm(id,r=null){
         let row = document.getElementById(r);
         let cells = row.children;
         let v=['ci','name','email','role'];
-        for(i=1;i<cells.length-1;i++){
-            if(i==4)
-                document.getElementById(v[i-1]).value=cells[i].textContent==='Gerente' ? 1 : 2;
+        for(i=0;i<cells.length-1;i++){
+            if(i==3)
+                document.getElementById(v[i]).value=cells[i].textContent==='Gerente' ? 1 : 2;
             else
-                document.getElementById(v[i-1]).value=cells[i].textContent;
+                document.getElementById(v[i]).value=cells[i].textContent;
         }
-        form.action="{{route('admin.employee.update','')}}"+"/"+cells[0].textContent;
+        form.action="{{route('admin.employee.update','')}}"+"/"+document.getElementById(idu);
     }
 }
 </script>

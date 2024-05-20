@@ -25,7 +25,7 @@ $products=Product::paginate(10);
 <div class="card">
     <div class="card-body">
         <h5 class="card-title"> Lista Productos</h5>
-        <table class="table table-striped">
+        <table class="table table-striped nowrap" id="tableProduct" style="width: 100%;">
             <thead>
                 <tr class="text-center">
                     <th>Id</th>
@@ -73,7 +73,7 @@ $products=Product::paginate(10);
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Lista Categorias</h5>
-        <table class="table" id="tableCategory">
+        <table class="table table-striped nowrap" id="tableCategory" style="width: 100%;">
             <thead>
                 <tr>
                     <th>Id</th>
@@ -252,9 +252,20 @@ new DataTable('#tableCategory',{
         { targets: [2], orderable: false, searchable: false }
     ],
     paging : false,
-    language : {search : 'Filtrar:'}
+    language : {search : 'Filtrar:'},
+    responsive:true,
+});
+new DataTable('#tableProduct',{
+columnDefs:[
+{ targets:[4], orderable:false, searchable:false }
+],
+paging:false,
+language : {search:'Filtrar'},
+fixedColumns: true,
+scrollX:true
 });
 document.getElementById('tableCategory_info').classList.add('d-none')
+document.getElementById('tableProduct_info').classList.add('d-none')
 
 function updateCategory(id,name){
     form=document.getElementById('form-update-category');
