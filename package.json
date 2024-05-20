@@ -15,5 +15,8 @@
         "prettier": "3.2.5",
         "sass": "^1.56.1",
         "vite": "^5.0"
+    },
+    "dependencies": {
+        "sweetalert2": "^11.10.8"
     }
 }
