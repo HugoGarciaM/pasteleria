@@ -328,7 +328,7 @@ return [
         ['header' => 'VENTA'],
         [
             'text' => 'Registrar Venta',
-            'url' => '#',
+            'route' => 'admin.sale',
             'icon' => 'fas fa-cash-register',
         ],
         [
@@ -448,12 +448,14 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
+                    // 'location' => '//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js',
+                    'location' => '//cdn.datatables.net/v/bs5/dt-2.0.7/r-3.0.2/datatables.min.js'
                 ],
                 [
                     'type' => 'css',
                     'asset' => false,
-                    'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
+                    'location'=>'//cdn.datatables.net/v/bs5/dt-2.0.7/r-3.0.2/datatables.min.css'
+                    // 'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
                 ],
             ],
         ],
@@ -463,7 +465,12 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdn.datatables.net/2.0.3/js/dataTables.min.js',
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/v/bs5/dt-2.0.7/fh-4.0.1/r-3.0.2/sl-2.0.1/datatables.min.js',
                 ],
                 // [
                 //     'type' => 'js',
@@ -473,9 +480,24 @@ return [
                 [
                     'type' => 'css',
                     'asset' => false,
-                    'location' => '//cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css',
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/v/bs5/dt-2.0.7/fh-4.0.1/r-3.0.2/sl-2.0.1/datatables.min.css',
                 ],
             ],
+        ],
+        'sweetalert' => [
+            'active'=>true,
+            'files'=>[
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.jsdelivr.net/npm/sweetalert2@11'
+                ]
+            ]
         ],
         'Select2' => [
             'active' => false,
