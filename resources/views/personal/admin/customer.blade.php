@@ -30,6 +30,9 @@ $customers=Person::paginate(10);
                     <td>{{$customer->user ? 'si' : 'no'}}</td>
                 </tr>
                 @endforeach
+                <div>
+                    {{$customers->links()}}
+                </div>
             </tbody>
         </table>
     </div>
@@ -41,7 +44,7 @@ $customers=Person::paginate(10);
 new DataTable('#table',
     {
         paging:false,
-        responsive:true
+            responsive:true
     });
 document.getElementById('table_info').classList.add('d-none');
 </script>

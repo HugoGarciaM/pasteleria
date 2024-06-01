@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('business_info', function (Blueprint $table) {
             $table->id();
+            $table->string('user')->nullable(false);
+            $table->string('password')->nullable(false);
             $table->integer('number_account');
             $table->string('bank');
-            $table->string('token',255);
             $table->timestamps();
         });
     }

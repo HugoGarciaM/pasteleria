@@ -20,7 +20,7 @@
 use App\Models\Date;
 use App\Models\Product;
 
-$dates=Date::orderBy('event_day','desc')->paginate();
+$dates=Date::orderBy('event_day','desc')->paginate(10);
 $products=Product::where('status',1)->get();
 @endphp
 
@@ -77,6 +77,9 @@ $products=Product::where('status',1)->get();
 </div>
 
 @endforeach
+<div>
+    {{$dates->links()}}
+</div>
 
 <x-modal title="actualizacion" id="editProduct">
     <form method="post" action="" id="form-edit">
