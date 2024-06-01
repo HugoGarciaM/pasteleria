@@ -48,4 +48,13 @@ class DashboardController extends Controller
     public function sale(){
         return view('personal.sale');
     }
+
+    public function settings(){
+        $this->authorize('Role',Role::ADMIN);
+        return view('personal.admin.Settings');
+    }
+
+    public function saleComplete(){
+        return view('personal.saleComplete');
+    }
 }

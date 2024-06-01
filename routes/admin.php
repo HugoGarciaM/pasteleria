@@ -5,8 +5,9 @@ use App\Http\Controllers\Personal\Admin\CategoryController;
 use App\Http\Controllers\Personal\Admin\EmployeeController;
 use App\Http\Controllers\Personal\Admin\ProductController;
 use App\Http\Controllers\Personal\Admin\ProductDayController;
-use App\Http\Controllers\Personal\SaleController;
-use Illuminate\Http\Request;
+
+use App\Http\Controllers\Personal\UserController;
+use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 
 // prueba de creacion de cookies
@@ -27,6 +28,8 @@ Route::controller(DashboardController::class)->group(function(){
     Route::get('/employee','employee')->name('admin.employee');
     Route::get('/customer','customer')->name('admin.customer');
     Route::get('/sale','sale')->name('admin.sale');
+    Route::get('/settings','settings')->name('admin.settings');
+    Route::get('/sale/date','saleComplete')->name('admin.sale.date');
 });
 
 
@@ -58,9 +61,15 @@ Route::controller(EmployeeController::class)->group(function(){
 });
 
 Route::controller(SaleController::class)->group(function(){
-    Route::post('/sale','register')->name('personal.sale.register');
+    Route::post('/sale','registerOffline')->name('personal.sale.registerOffline');
+    Route::get('/sale/pdf/{transaction}','showPayment')->name('personal.sale.pdf');
+    Route::get('/sale/genPdf/{transaction}','receipt')->name('personal.sale.genPdf');
 });
 
+
+Route::controller(UserController::class)->group(function(){
+    Route::get('/person/{ci?}','getPerson')->name('api.getPerson');
+});
 // Route::controller();
 
 ?>

@@ -16,7 +16,27 @@ $batch=Date::first()->stockProducts(date('Y-m-d'));
 @section('content')
 <div class="card">
     <div class="card-body">
-        <form action="{{route('personal.sale.register')}}" method="post" id="formSale">
+        <form action="{{route('personal.sale.registerOffline')}}" method="post" id="formSale">
+            @error('data')
+                <x-toast title="Error" id="errorData" colorscheme="text-bg-danger">
+                    {{$message}}
+                </x-toast>
+            @enderror
+            @error('id')
+                <x-toast title="Error" id="errorIdP" colorscheme="text-bg-danger">
+                    {{$message}}
+                </x-toast>
+            @enderror
+            @error('price')
+                <x-toast title="Error" id="errorPrice" colorscheme="text-bg-danger">
+                    {{$message}}
+                </x-toast>
+            @enderror
+            @error('quantity')
+                <x-toast title="Error" id="errorQuantity" colorscheme="text-bg-danger">
+                    {{$message}}
+                </x-toast>
+            @enderror
             @csrf
             <h5>Cliente</h5>
             <div class="input-group">
@@ -104,11 +124,10 @@ $batch=Date::first()->stockProducts(date('Y-m-d'));
         <button type="button" class="btn btn-primary" onclick="insertProduct()">Añadir</button>
     </div>
 </x-modal>
-@endsection
 
 <x-modal id="payment" title="Metodo de Pago">
     <div class="d-flex justify-content-center">
-        <button class="btn btn-success" style="width: 50%;">
+        <button class="btn btn-success" style="width: 50%;" onclick="offline()">
             <i class="fa fa-money-bill fs-1"></i>
             <h5>Efectivo</h5>
         </button>
@@ -118,8 +137,11 @@ $batch=Date::first()->stockProducts(date('Y-m-d'));
         </button>
     </div>
 </x-modal>
+@endsection
 
 @section('js')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+
 <script>
 
 var tableProduct=new DataTable('#TableProduct',{
@@ -208,12 +230,15 @@ function searchPerson(){
 }
 
 function sendSale(){
-    let data=[]
+    let data=[];
+    if(tableProduct.rows().data().toArray().length<=0){
+        return Swal.fire({title: "Vacio?...",text: "Parece que la lista esta vacia!",icon:"warning"});
+    }
     for(i=0;i<tableProduct.rows().data().toArray().length;i++){
         let p={
-            id: tableProduct.rows(i).data().toArray()[0][0],
-            price:tableProduct.rows(i).data().toArray()[0][3],
-            quantity:tableProduct.rows(i).data().toArray()[0][2]
+            id: parseInt(tableProduct.rows(i).data().toArray()[0][0]),
+            price: parseFloat(tableProduct.rows(i).data().toArray()[0][3]),
+            quantity: parseInt(tableProduct.rows(i).data().toArray()[0][2])
         }
         data.push(p)
     }
@@ -221,6 +246,13 @@ function sendSale(){
     let form=document.getElementById('formSale');
     form.submit();
 }
+
+function offline(){
+    let form=document.getElementById('formSale');
+    form.action="{{route('personal.sale.registerOffline')}}";
+    sendSale();
+}
+
 </script>
 @endsection
 

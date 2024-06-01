@@ -333,7 +333,7 @@ return [
         ],
         [
             'text' => 'Ventas Realiazadas',
-            'url' => '#',
+            'route' => 'admin.sale.date',
             'icon' => 'fa fa-list-ul',
         ],
         ['header' => 'ESTADO PRODUCTO'],
@@ -382,6 +382,11 @@ return [
                     "text"=>"Reporte",
                     "url"=>"#",
                     "icon"=>"fa fa-file-invoice-dollar"
+                ],
+                [
+                    "text" => "Configuracion",
+                    "route" => "admin.settings",
+                    "icon" => "fa fa-sliders-h"
                 ]
             ]
         ],
