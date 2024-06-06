@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Detail_pay extends Model
 {
     use HasFactory;
+    public $fillable = [
+        'qr',
+        'status'
+    ];
 }

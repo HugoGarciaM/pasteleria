@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('detail_pays', function (Blueprint $table) {
             $table->id();
-            $table->string('qr')->nullable(false);
+            $table->binary('qr')->nullable(false);
             $table->string('token')->nullable(false);
             $table->timestamps();
         });

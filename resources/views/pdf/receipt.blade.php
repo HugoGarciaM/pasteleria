@@ -1,5 +1,6 @@
 @php
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+$total=0;
 @endphp
 
 <!DOCTYPE html>
@@ -47,10 +48,13 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
                         </thead>
                         <tbody style="border-bottom: solid;">
                             @foreach ($details as $detail)
+                            @php
+                                $total+=$detail->quantity*$detail->price;
+                            @endphp
                             <tr>
                                 <td>{{$detail->product->name}}</td>
-                                <td>{{$detail->price}}</td>
                                 <td>{{$detail->quantity}}</td>
+                                <td>{{$detail->price}}</td>
                                 <td>{{($detail->quantity*$detail->price)}}</td>
                             </tr>
                             @endforeach
@@ -58,7 +62,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
                         <tfoot>
                             <tr style="font-weight: bold;">
                                 <td colspan="3">TOTAL</td>
-                                <td>100</td>
+                                <td>{{$total}}</td>
                             </tr>
                         </tfoot>
                     </table>

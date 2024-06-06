@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Business_info extends Model
 {
     use HasFactory;
+
+    protected $table="business_info";
+
+    public $fillable=[
+        'bank',
+        'number_account',
+        'token'
+    ];
 }

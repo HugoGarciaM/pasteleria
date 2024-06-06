@@ -5,7 +5,7 @@ use App\Http\Controllers\Personal\Admin\CategoryController;
 use App\Http\Controllers\Personal\Admin\EmployeeController;
 use App\Http\Controllers\Personal\Admin\ProductController;
 use App\Http\Controllers\Personal\Admin\ProductDayController;
-
+use App\Http\Controllers\Personal\Admin\SettingsController;
 use App\Http\Controllers\Personal\UserController;
 use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +70,10 @@ Route::controller(SaleController::class)->group(function(){
 Route::controller(UserController::class)->group(function(){
     Route::get('/person/{ci?}','getPerson')->name('api.getPerson');
 });
-// Route::controller();
+
+Route::controller(SettingsController::class)->group(function(){
+    Route::post('/settings/testBank','testConectionBank')->name('settings.testBank');
+    Route::post('/settings/saveBank','saveBank')->name('settings.saveBank');
+});
 
 ?>

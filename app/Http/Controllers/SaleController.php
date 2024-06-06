@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\Status;
 use App\Enums\Type_transaction;
 use App\Http\Controllers\Controller;
+use App\Models\Date;
 use App\Models\Person;
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,15 +23,15 @@ class SaleController extends Controller
             'name' => 'nullable|string',
             'data' => 'required|json|min:1'
         ]);
+        $productBatch=Date::first();
         foreach(json_decode($request->data,true) as $data){
-            $v=Validator::make($data,[
+            $max= $productBatch->verifyStock($data['id'])!=null ? $productBatch->verifyStock($data['id'])[0]->stock : 0;
+            Validator::make($data,[
                 'id' => 'required|integer|exists:products,id',
                 'price' => 'required|integer',
-                'quantity' => 'required|integer'
+                'quantity' => 'required|integer|min:1|max:'.$max,
             ])->validate();
         }
-        // return view('personal.payment',['transaction' => '']);
-        // return view('personal.payment');
         $data=json_decode($request->data);
         DB::beginTransaction();
         $details=[];
@@ -53,15 +55,14 @@ class SaleController extends Controller
                 }
                 $transaction->customer=$person->id;
             }
-            $transaction->seller=$request->user()->id;
+
+            $transaction->seller=$request->user()!=null ? $request->user()->id : null;
             $transaction->status=Status::DISABLE;
             $transaction->type=Type_transaction::OFFLINE;
             $transaction->save();
             $transaction->details()->createMany($details);
             DB::commit();
             return redirect(route('personal.sale.pdf',$transaction->id));
-            // return view('personal.payment',['transaction' => $transaction->id]);
-            // return view('pdf.receipt',$transaction);
         } catch (\Exception $e) {
             DB::rollBack();
             return "hubo un error: ";
@@ -73,7 +74,6 @@ class SaleController extends Controller
     }
 
     public function Receipt(Request $request,Transaction $transaction){
-        // $transaction=Transaction::find(5);
         $qr=QrCode::generate($transaction->id);
         $seller = isset($transaction->_seller->person->name) ? explode(' ',trim($transaction->_seller->person->name)) : null;
         $quantity = sizeof($transaction->details);
@@ -105,4 +105,21 @@ class SaleController extends Controller
             'date' => 'date_format:Y-m-d'
         ]);
     }
+
+    public function getProduct(Request $request){
+        $request->validate([
+            'id' => 'exists:products,id'
+        ]);
+        $product = Date::first()->verifyStock($request->id);
+        if($product!=null){
+            return response()->json([
+                'product'=>$product[0]
+            ],200) ;
+        }else{
+            return response()->json([
+                'message'=>'Not Found'
+            ],404) ;
+        }
+    }
+
 }
