@@ -7,7 +7,7 @@
     #$products=Product::all();
     #$batch=Date::orderBy('id','desc')->first();
     #$batch=Date::where('event_day',date('Y-m-d'))->first();
-    $batch = Date::first()->stockProducts(date('Y-m-d'));
+    $batch = Date::first() != null ? Date::first()->stockProducts(date('Y-m-d')) : null;
 @endphp
 @section('content_header')
     <h1 id="idtitle">Registrar Venta</h1>
@@ -16,7 +16,9 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('personal.sale.registerOffline') }}" method="post" id="formSale">
+            <form action="{{ route('personal.sale.register') }}" method="post" id="formSale">
+                <input type="number" class="d-none" id="type" name="type">
+                <input type="number" class="d-none" id="idq" name="pay">
                 @error('data')
                     <x-toast title="Error" id="errorData" colorscheme="text-bg-danger">
                         {{ $message }}
@@ -177,6 +179,8 @@
         var quantityProduct = document.getElementById('quantityProduct');
         var priceProduct = document.getElementById('priceProduct');
         var status = false;
+        var idQr = null;
+        var idQr2 = null;
 
         function insertProduct() {
             verifyStock();
@@ -278,19 +282,30 @@
         }
 
         function offline() {
-            let form = document.getElementById('formSale');
-            form.action = "{{ route('personal.sale.registerOffline') }}";
+            {{-- let form = document.getElementById('formSale'); --}}
+            {{-- form.action = "{{ route('personal.sale.register') }}"; --}}
+            document.getElementById('type').value = 0;
+            idQr = null;
+            idQr2 = null;
+            document.getElementById('idq').disabled = true;
             sendSale();
         }
 
-        function back(){
+        function back() {
             clearInterval(interval);
             document.getElementById('divQR').classList.add('d-none');
             document.getElementById('divPayment').classList.remove('d-none');
         }
 
         function online() {
-            let idQr;
+            if (tableProduct.rows().data().length == 0) {
+                return Swal.fire({
+                    title: "Vacio?...",
+                    text: "Parece que la lista esta vacia!",
+                    icon: "warning"
+                });
+            }
+            document.getElementById('type').value = 1;
             fetch('{{ route('paymentQR') }}', {
                 method: 'POST',
                 headers: {
@@ -308,7 +323,11 @@
                 {{-- console.log("contenido "+data.qrcode); --}}
                 {{-- console.log("contenido message"+data.id); --}}
                 idQr = data.id;
-                inteval=setInterval(function() {
+                idQr2 = data.idq;
+                document.getElementById('idq').disabled = false;
+                document.getElementById('idq').value = idQr2;
+                console.log('el id es: ' + idQr);
+                inteval = setInterval(function() {
                     fetch('{{ route('statusQR') }}', {
                         method: 'POST',
                         headers: {
@@ -316,12 +335,13 @@
                             'X-CSRF-Token': "{{ csrf_token() }}"
                         },
                         body: JSON.stringify({
-                            id: idQr
+                            id: idQr,
+                            idq: idQr2
                         })
                     }).then(response => response.json()).
-                        then(data => {
-                        console.log("el estado es: "+data.status);
-                        if (data.status == false) {
+                    then(data => {
+                        console.log("el estado es: " + data.status + " " + data.message);
+                        if (data.status == true) {
                             sendSale();
                         }
                     });

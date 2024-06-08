@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Role;
 use App\Enums\Status;
 use App\Enums\Type_transaction;
 use App\Http\Controllers\Controller;
@@ -17,11 +18,14 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SaleController extends Controller
 {
-    public function registerOffline(Request $request){
+    public function register(Request $request){
+        // return $request;
         $request->validate([
             'ci '=> 'nullable|integer',
             'name' => 'nullable|string',
-            'data' => 'required|json|min:1'
+            'data' => 'required|json|min:1',
+            'type' => 'required|integer',
+            'pay' => 'integer'
         ]);
         $productBatch=Date::first();
         foreach(json_decode($request->data,true) as $data){
@@ -55,10 +59,14 @@ class SaleController extends Controller
                 }
                 $transaction->customer=$person->id;
             }
-
-            $transaction->seller=$request->user()!=null ? $request->user()->id : null;
-            $transaction->status=Status::DISABLE;
-            $transaction->type=Type_transaction::OFFLINE;
+            $seller=null;
+            if($request->user()->role == Role::ADMIN || $request->user()->role == Role::PERSONAL) $seller = $request->user()->id;
+            $transaction->seller = $seller;
+            $transaction->status = $seller!=null ? Status::DISABLE : Status::ENABLE;
+            $transaction->type= $request->type==0 ? Type_transaction::OFFLINE : Type_transaction::ONLINE;
+            if($request->type==1){
+                $transaction->detail_pay_id=$request->pay;
+            }
             $transaction->save();
             $transaction->details()->createMany($details);
             DB::commit();

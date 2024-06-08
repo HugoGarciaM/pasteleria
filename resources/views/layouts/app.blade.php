@@ -1,3 +1,6 @@
+@php
+    use App\Enums\Role;
+@endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
     <head>
@@ -56,12 +59,14 @@
                             </li>
                             @endif
                             @else
+                            @if (auth()->user()->role == Role::CUSTOMERS)
                             <li class="nav-item">
                                 <button class="nav-link" id="basket">
                                     <i class="nf nf-fa-basket_shopping"></i>
                                     Canasta
                                 </button>
                             </li>
+                            @endif
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->person->name }}

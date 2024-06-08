@@ -34,6 +34,7 @@ class PaymentController extends Controller
         try {
             $response = $client->request('POST',$api,$options);
             $qr=QrCode::generate($response->getBody());
+            $id = (json_decode($response->getBody()))->id;
             $qrBase64 = base64_encode($qr);
             if($response->getStatusCode()==200){
                 $registerQr = new Detail_pay([
@@ -41,7 +42,7 @@ class PaymentController extends Controller
                     'status' => 1
                 ]);
                 $registerQr->save();
-                return response()->json(['qrcode'=>$qrBase64,'id'=>$registerQr->id],200);
+                return response()->json(['qrcode'=>$qrBase64,'id'=>$id,'idq'=>$registerQr->id],200);
             }else{
                 return response()->json(['message'=>'error es '.$response->getStatusCode()],404);
             }
@@ -72,7 +73,7 @@ class PaymentController extends Controller
             $response = $client->request('POST',$url,$options);
             $json= json_decode($response->getBody());
             if($response->getStatusCode()==200 && $json->message=='qr disabled'){
-                $registerQr = Detail_pay::find($request->id);
+                $registerQr = Detail_pay::find($request->idq);
                 $registerQr->status=0;
                 $registerQr->save();
                 return response()->json(['status'=>true],200);

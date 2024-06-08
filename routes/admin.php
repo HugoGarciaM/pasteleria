@@ -61,7 +61,7 @@ Route::controller(EmployeeController::class)->group(function(){
 });
 
 Route::controller(SaleController::class)->group(function(){
-    Route::post('/sale','registerOffline')->name('personal.sale.registerOffline');
+    Route::post('/sale','register')->name('personal.sale.register');
     Route::get('/sale/pdf/{transaction}','showPayment')->name('personal.sale.pdf');
     Route::get('/sale/genPdf/{transaction}','receipt')->name('personal.sale.genPdf');
 });
