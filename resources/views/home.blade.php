@@ -1,9 +1,31 @@
 @extends('layouts.app')
 
 @php
+    use App\Models\Category;
     use App\Models\Date;
-    $batch = Date::first()->stockProducts(date('Y-m-d'));
-    $qq = Date::first()->verifyStock(1);
+    use App\Models\Product;
+    $categories = Category::all();
+    $batch = null;
+    $stat='available';
+    if($request!=null) $stat = $request->stat;
+    if ($stat == 'available') {
+        $batch = Date::first()->stockProducts(date('Y-m-d'));
+    }
+    else if ($stat == 'all') {
+        if ($request->name != null && $request->category != null) {
+            $batch = Product::where('name', 'like', '%' . $request->name . '%')
+                ->where('category_id', $request->category)
+                ->paginate(12);
+        } elseif ($request->name != null) {
+            $batch = Product::where('name', 'like', '%' . $request->name . '%')->paginate(12);
+        } elseif ($request->category != null) {
+            $batch = Product::where('category_id', $request->category)->paginate(12);
+        } else {
+            $batch = Product::where('status', 1)->paginate(12);
+        }
+    } else {
+        abort(404);
+    }
 @endphp
 
 @section('content')
@@ -14,66 +36,101 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title"><b>Filtrar</b></h5>
-                        <div class="input-group">
-                            <span class="input-group-text">Nombre:</span>
-                            <input type="number" name="" value="" class="form-control">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-text">Categoria:</span>
-                            <select class="form-select" name="" id="">
-                                <option value="">1</option>
-                                <option value="">2</option>
-                            </select>
-                        </div>
-                        <div class="form-check mt-1">
-                            <input type="radio" class="form-check-input" name="q" checked>
-                            <span class="form-check-label">Disponible</span>
-                        </div>
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input" name="q">
-                            <span class="form-check-label">Todo</span>
-                        </div>
-                        <div class="d-flex justify-content-end mt-1">
-                            <button class="btn btn-danger">Restablecer</button>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#t"><i
-                                    class="nf nf-fa-search"></i> Buscar</button>
-                        </div>
+                        <form method="get" action="{{route('home')}}">
+                            <div class="input-group">
+                                <span class="input-group-text">Nombre:</span>
+                                <input type="text" name="name" value="{{$request->name}}" class="form-control" id="sname" disabled>
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="form-check-input" onchange="statusInput('sname')">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text">Categoria:</span>
+                                <select class="form-select" name="category" id="scat" disabled>
+                                    <option value=null >Todo</option>
+                                    @if ($categories!=null)
+                                        @foreach ($categories as $category)
+                                                <option value={{$category->id}}>{{$category->name}}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="form-check-input" onchange="statusInput('scat')">
+                                </div>
+                            </div>
+                            <div class="form-check mt-1">
+                                <input type="radio" class="form-check-input" value="available" name="stat" id="available">
+                                <span class="form-check-label">Disponible</span>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" value="all" name="stat" id="all">
+                                <span class="form-check-label">Todo</span>
+                            </div>
+                            <div class="d-flex justify-content-end mt-1">
+                                <button class="btn btn-danger">Restablecer</button>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#t" type="submit">
+                                    <i class="nf nf-fa-search"></i> Buscar</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div class="d-flex justify-content-center mt-2">
                     <div class="row" style="width: 100%;">
-                        @foreach ($batch as $product)
-                            <div class="col-md-3 mb-4 col-custom">
-                                <div class="card product">
-                                    <div style="position: relative;">
-                                        <img src="{{ asset('storage/product/' . $product->id) }}" class="card-img-top"
-                                            style="height: 150px;">
-                                        <div style="position: absolute;top: 70%;text-align: end;width: 100%;rotate:340deg;">
-                                            <div class="badge text-bg-danger m-0 p-1"
-                                                style="border: solid;border-width: 1px;">
-                                                <h2 class="m-0 p-sm-1"
-                                                    style="border:solid;border-radius: 5px;border-width: 2px;font-size: 25px;">
-                                                    {{ $product->price }}Bs
-                                                </h2>
+                        @if ($batch != null)
+                            @foreach ($batch as $product)
+                                @if ($stat == 'available')
+                                    @if ($request->name!=null && $request->category!=null)
+                                        @if (strchr($product->name,$request->name) == '' && $product->category_id!=$request->category)
+                                            @break
+                                        @endif
+                                    @elseif($request->name!=null)
+                                        @if(strchr($product->name,$request->name) == '')
+                                            @break
+                                        @endif
+                                    @elseif($request->category!=null)
+                                        @if($product->category_id!=$request->category)
+                                            @break
+                                        @endif
+                                    @endif
+                                @endif
+                                <div class="col-md-3 mb-4 col-custom">
+                                    <div class="card product">
+                                        <div style="position: relative;">
+                                            <img src="{{ asset('storage/product/' . $product->id) }}" class="card-img-top"
+                                                style="height: 150px;">
+                                            <div
+                                                style="position: absolute;top: 70%;text-align: end;width: 100%;rotate:340deg;">
+                                                <div class="badge text-bg-danger m-0 p-1"
+                                                    style="border: solid;border-width: 1px;">
+                                                    <h2 class="m-0 p-sm-1"
+                                                        style="border:solid;border-radius: 5px;border-width: 2px;font-size: 25px;">
+                                                        {{ $product->price }}Bs
+                                                    </h2>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5 class="card-title">
-                                            <b>{{ $product->name }}</b>
-                                        </h5>
-                                        <div class="scrollable-paragraph">
-                                            <p>{{ $product->description }}</p>
+                                        <div class="card-body d-flex flex-column">
+                                            <h5 class="card-title">
+                                                <b>{{ $product->name }}</b>
+                                            </h5>
+                                            <div class="scrollable-paragraph">
+                                                <p>{{ $product->description }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer mt-auto">
+                                            <button class="btn btn-danger w-100" onclick="getProduct({{ $product->id }})">
+                                                Ordenar
+                                            </button>
                                         </div>
                                     </div>
-                                    <div class="card-footer mt-auto">
-                                        <button class="btn btn-danger w-100" onclick="getProduct({{ $product->id }})">
-                                            Ordenar
-                                        </button>
-                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                            @if ($stat != 'available')
+                                <div class="d-flex justify-content-center">
+                                    {{ $batch->links() }}
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
@@ -137,6 +194,15 @@
 @section('js')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
+
+        @if ($stat == 'available')
+            document.getElementById('available').checked = true;
+        @else
+            document.getElementById('all').checked = true;
+        @endif
+        @if ($request->category !=null)
+        document.getElementById('scat').value = {{$request->category}};
+        @endif
         const Basket = document.getElementById('basket');
         var tableProduct;
         var total = 0;
@@ -254,6 +320,11 @@
             document.getElementById('data').value = JSON.stringify(data);
             let form = document.getElementById('formSale');
             form.submit();
+        }
+
+        function statusInput(id){
+            let element = document.getElementById(id);
+            element.disabled = element.disabled==true ? false : true;
         }
     </script>
 @endsection

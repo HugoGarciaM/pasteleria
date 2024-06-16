@@ -52,7 +52,7 @@
                         <a class="nav-link" href="#contact">Contactanos</a>
                     </li>
                     <li class="nav-item">
-                        <a href="http://localhost:8000/register" class="btn btn-primary ml-xl-4">Registrase</a>
+                        <a href="{{route('register')}}" class="btn btn-primary ml-xl-4">Registrase</a>
                     </li>
                 </ul>
             </div>
@@ -91,7 +91,7 @@
         <!--  gallary Section  -->
         <div id="gallary" class="text-center bg-dark text-light has-height-md middle-items wow fadeIn">
             <h2 class="section-title">NUESTRO MENÚ</h2>
-            <h5>Ahora mas cerca de ustedes, Ofrecemos una variedad de pasteles y postres, reservalos ¡<a href="{{url('/t')}}">Registrandote!</a></h5>
+            <h5>Ahora mas cerca de ustedes, Ofrecemos una variedad de pasteles y postres, reservalos ¡<a href="{{route('register')}}">Registrandote!</a></h5>
         </div>
         <div class="gallary row">
             <div class="col-sm-6 col-lg-3 gallary-item wow fadeIn">
