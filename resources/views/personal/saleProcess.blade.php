@@ -80,7 +80,7 @@
                 const modal = new bootstrap.Modal(document.getElementById('mTransaction'));
                 modal.show();
                 interval = setInterval(() => {
-                    fetch('{{ route('personal.sale.verifyTransaction') }}' + 'id=' + id).
+                    fetch('{{ route('personal.sale.verifyTransaction') }}' + '?id=' + id).
                     then(response => response.json()).
                     then(data => {
                         if (data.message == 'ok') window.location.href =
