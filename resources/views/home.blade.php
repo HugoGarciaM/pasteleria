@@ -8,7 +8,7 @@
     $batch = null;
     $stat='available';
     if($request!=null) $stat = $request->stat;
-    if ($stat == 'available') {
+    if ($stat == 'available' && Date::first()!=null) {
         $batch = Date::first()->stockProducts(date('Y-m-d'));
     }
     else if ($stat == 'all') {
@@ -209,7 +209,7 @@
     <script>
 
         var imgQR;
-        var interval;
+        var interval=null;
         var total = document.getElementById('total');
         var idQr = null;
         var idQr2 = null;
@@ -327,7 +327,7 @@
         function sendSale() {
             let data = [];
             if (tableProduct.rows().data().toArray().length <= 0) {
-                return window.Swal.fire({
+                return window.swal.fire({
                     title: "Vacio?...",
                     text: "Parece que la lista esta vacia!",
                     icon: "warning"
@@ -350,7 +350,7 @@
             {{-- console.log(); --}}
             {{-- return; --}}
             if (tableProduct.rows().data().length == 0) {
-                return window.Swal.fire({
+                return window.swal.fire({
                     title: "Vacio?...",
                     text: "Parece que la lista esta vacia!",
                     icon: "warning"
@@ -392,13 +392,14 @@
                     then(data => {
                         console.log("el estado es: " + data.status + " " + data.message);
                         if (data.status == true) {
+                            clearInterval(interval);
                             sendSale();
                         }
                     });
                 }, 3000);
             }).catch(error => {
                 console.log('este es el error: ' + error);
-                window.Swal.fire({
+                window.swal.fire({
                     title: "Hubo...",
                     text: "Parece que hubo un error",
                     icon: "error"
