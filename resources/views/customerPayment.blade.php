@@ -124,7 +124,7 @@
             try {
                 let qrData = JSON.parse(decodedText);
                 if (qrData.id === undefined || qrData.customer === undefined || qrData.customer !=
-                    "{{ auth()->user()->id }}")
+                    "{{ auth()->user()->person->ci }}")
                     Swal.fire({
                         title: "Vaya...",
                         text: "Parece que este QR no es Valido",
