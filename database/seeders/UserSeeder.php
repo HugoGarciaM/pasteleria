@@ -28,5 +28,21 @@ class UserSeeder extends Seeder
             'password'=>'12345678'
         ]);
         $u->save();
+
+
+        $p1=new Person();
+        $p1->ci=7329035;
+        $p1->name='example';
+        $p1->save();
+
+        $u1=new User([
+            'person_ci'=>7329035,
+            // 'name'=>'cristian',
+            // 'surname'=>'abalos',
+            'role'=>3,
+            'email' => 'example@example.com',
+            'password'=>'12345678'
+        ]);
+        $u1->save();
     }
 }

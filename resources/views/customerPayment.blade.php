@@ -63,6 +63,9 @@
                                 <th>Precio</th>
                             </thead>
                             <tbody>
+                                @php
+                                    $total = 0;
+                                @endphp
                                 @foreach ($transaction->details as $product)
                                     <tr>
                                         @php
@@ -102,6 +105,7 @@
                 <span class="input-group-text">Id</span>
                 <input class="form-control" type="number" value="" id="id" readonly>
             </div>
+                <input class="d-none" type="number" value="" id="seller" readonly>
             <div class="row mt-1 mx-1">
                 <a class="btn btn-success" id="btnSuccess">Recoger</a>
                 <a class="btn btn-danger" id="btnCancel">Cancelar</a>
@@ -135,6 +139,7 @@
                         window.location.href = "{{ route('payments') }}";
                     });
                 document.getElementById('id').value = qrData.id;
+                document.getElementById('seller').value = qrData.seller;
                 document.getElementById('part1').classList.add('d-none');
                 document.getElementById('part2').classList.remove('d-none');
                 {{-- document.getElementById('bt').click(); --}}
@@ -194,7 +199,7 @@
             document.getElementById('part1').classList.remove('d-none');
         });
         btnSuccess.addEventListener('click', () => {
-            fetch('{{ route('payments.desactive') }}' + '?id=' + document.getElementById('id').value).
+            fetch('{{ route('payments.desactive') }}' + '?id=' + document.getElementById('id').value+'&seller='+document.getElementById('seller').value).
             then(response => response.json()).
             then(data => {
                 if (data.message == 'ok') window.location.href = '{{ route('payments') }}';

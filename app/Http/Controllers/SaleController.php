@@ -161,7 +161,8 @@ class SaleController extends Controller
     public function generateVerification(Request $request,$id){
         $data = [
             'id' => $id,
-            'customer' => $request->customer
+            'customer' => $request->customer,
+            'seller' => $request->user()->id
         ];
         $qr = QrCode::generate(json_encode($data));
         return response()->json(['qrcode'=>base64_encode($qr)],200);
@@ -180,6 +181,7 @@ class SaleController extends Controller
         $transaction = Transaction::find($request->id);
         if($transaction==null) return response()->json(['message'=>'failled'],404);
         $transaction->status = Status::DISABLE;
+        $transaction->seller = $request->seller;
         if($transaction->save())
             return response()->json(['message'=>'ok'],200);
         else
