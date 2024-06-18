@@ -35,6 +35,22 @@ $info = Business_info::first();
             </form>
         </div>
     </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><strong>Parametros</strong></h5>
+            <form action="{{route('settings.saveRefund')}}" method="post">
+                @csrf
+                <div class="input-group">
+                    <span class="input-group-text">Pocentaje de Devolucion:</span>
+                    <input type="number" class="form-control" name="refund" value={{$info->refund!=null ? $info->refund : 0}}>
+                    <span class="input-group-text">%</span>
+                </div>
+                <div class="mt-1 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
 
 @section('js')

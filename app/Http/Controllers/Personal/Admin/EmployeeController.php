@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Personal\Admin;
 
+use App\Enums\Status;
 use App\Http\Controllers\Controller;
 use App\Mail\PasswordMail;
 use App\Models\Person;
@@ -21,7 +22,8 @@ class EmployeeController extends Controller
         $request->validate([
             'ci' => 'required|integer',
             'name' => 'required|string',
-            'email' => 'required|unique:users|email'
+            'email' => 'required|unique:users|email',
+            'status' => 'required'
         ]);
         $p=Person::where('ci',$request->ci)->first();
         if(!$p){
@@ -34,7 +36,8 @@ class EmployeeController extends Controller
             'person_ci'=>$request->ci,
             'email' => $request->email,
             'password' => Random::generate(),
-            'role' => $request->role
+            'role' => $request->role,
+            'status' => $request->status!=null ? Status::ENABLE : Status::DISABLE
         ]);
 
         if($user->save()){
@@ -55,6 +58,7 @@ class EmployeeController extends Controller
         $user->person->update(['name'=> $request->name]);
         $user->email=$request->email;
         $user->role=$request->role;
+        $user->status = $request->status!=null ? Status::ENABLE : Status::DISABLE;
         if($request->password)
             $user->password=$request->password;
         $user->save();

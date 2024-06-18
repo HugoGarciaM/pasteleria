@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer')->nullable(true);
             $table->unsignedBigInteger('seller')->nullable(true);
+            $table->double('total');
             $table->integer('status')->nullable(false);
             $table->integer('type')->nullable(false);
             $table->unsignedBigInteger('detail_pay_id');

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('number_account');
             $table->string('bank');
             $table->string('token',255);
+            $table->integer('refund')->nullable(true);
             $table->timestamps();
         });
     }

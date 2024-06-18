@@ -30,6 +30,7 @@ $i=0;
                     <th>Apellido y Nombre</th>
                     <th>Email</th>
                     <th>Rol</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,13 +41,16 @@ $i=0;
                     <td>{{$employee->person->name}}</td>
                     <td>{{$employee->email}}</td>
                     <td>{{($employee->role == Role::ADMIN ? 'Gerente' : 'Personal')}}</td>
+                    <td><input type="checkbox" value="0" {{$employee->status!=1 ? 'checked' : ''}} onclick='return false'></td>
                     <td>
                         <div>
                             <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#modalCreate" onclick="typeForm('form-employee','tr{{$i-1}}',{{$employee->id}})">Editar</button>
-                            <form class="d-inline"  id="drop{{$i}}" action="{{route('admin.employee.delete',$employee->id)}}" method="post">
-                                @csrf
-                                <button class="btn btn-danger" type="button" onclick="drop('drop{{$i}}')">Eliminar</button>
-                            </form>
+                            @if ( $employee->transactions->isEmpty())
+                                <form class="d-inline"  id="drop{{$i}}" action="{{route('admin.employee.delete',$employee->id)}}" method="post">
+                                    @csrf
+                                    <button class="btn btn-danger" type="button" onclick="drop('drop{{$i}}')">Eliminar</button>
+                                </form>
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -81,7 +85,11 @@ $i=0;
         </div>
         <div class="input-group" id="div-password">
             <span class="input-group-text">Contraseña</span>
-            <input type="password" class="form-control">
+            <input type="password" class="form-control" name="password">
+        </div>
+        <div class="form-check" id="div-status">
+            <input type="checkbox" class="form-check-input" name="status" id="status" value="0">
+            <span class="form-check-label">Activo</span>
         </div>
         <div class="modal-footer">
             <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">Cerrar</button>
@@ -115,11 +123,12 @@ $i=0;
 new DataTable('#myTable', {
 scrollX:true,
 columnDefs:[
-    {targets:[4],orderable:false,searchable:false},
+    {targets:[5],orderable:false,searchable:false},
 ],
 paging:false,
 language : {search : 'Filtrar:'},
-responsive:true
+responsive:true,
+scrollX:true
 });
 document.getElementById('myTable_info').classList.add('d-none');
 </script>
@@ -161,19 +170,22 @@ function typeForm(id,r=null,idu){
         document.getElementById('name').value=null;
         document.getElementById('email').value=null;
         document.getElementById('role').value=2;
+        document.getElementById('status').value=1;
     }else{
         document.getElementById('ci').readOnly=true;
         document.getElementById('div-password').classList.remove('d-none');
         let row = document.getElementById(r);
         let cells = row.children;
-        let v=['ci','name','email','role'];
+        let v=['ci','name','email','role','status'];
         for(i=0;i<cells.length-1;i++){
             if(i==3)
                 document.getElementById(v[i]).value=cells[i].textContent==='Gerente' ? 1 : 2;
+            else if(i==4)
+                document.getElementById(v[i]).checked=cells[i].textContent=='Activo' ? true : false;
             else
                 document.getElementById(v[i]).value=cells[i].textContent;
         }
-        form.action="{{route('admin.employee.update','')}}"+"/"+document.getElementById(idu);
+        form.action="{{route('admin.employee.update','')}}"+"/"+idu;
     }
 }
 </script>

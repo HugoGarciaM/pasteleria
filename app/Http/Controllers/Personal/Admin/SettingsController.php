@@ -52,4 +52,14 @@ class SettingsController extends Controller
         );
         return redirect(route('admin.settings'));
     }
+
+    public function saveRefund(Request $request){
+        Business_info::updateOrCreate(
+            ['id' => 1],
+            [
+                'refund' => $request->refund
+            ]
+        );
+        return redirect(route('admin.settings'));
+    }
 }

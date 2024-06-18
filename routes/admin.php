@@ -31,6 +31,7 @@ Route::controller(DashboardController::class)->group(function(){
     Route::get('/settings','settings')->name('admin.settings');
     Route::get('/sale/date','saleComplete')->name('admin.sale.date');
     Route::get('/sale/inProcess','saleInProcess')->name('admin.sale.inProcess');
+    Route::get('/sale/failed','saleFailed')->name('admin.sale.failed');
 });
 
 
@@ -77,6 +78,7 @@ Route::controller(UserController::class)->group(function(){
 Route::controller(SettingsController::class)->group(function(){
     Route::post('/settings/testBank','testConectionBank')->name('settings.testBank');
     Route::post('/settings/saveBank','saveBank')->name('settings.saveBank');
+    Route::post('/settings/refund','saveRefund')->name('settings.saveRefund');
 });
 
 ?>

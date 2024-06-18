@@ -61,4 +61,8 @@ class DashboardController extends Controller
     public function saleInProcess(){
         return view('personal.saleProcess');
     }
+
+    public function saleFailed(){
+        return view('personal.saleFailed');
+    }
 }

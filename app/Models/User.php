@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\Role;
+use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -23,7 +24,8 @@ class User extends Authenticatable
         'person_ci',
         'email',
         'password',
-        'role'
+        'role',
+        'status'
     ];
 
     /**
@@ -46,12 +48,17 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => Role::class
+            'role' => Role::class,
+            'status' => Status::class
         ];
     }
 
     public function person(){
         return $this->hasOne(Person::class,'ci','person_ci');
+    }
+
+    public function transactions(){
+        return $this->hasMany(Transaction::class,'seller','id');
     }
 
     // public function name():Attribute{

@@ -39,13 +39,15 @@ class SaleController extends Controller
         }
         $data=json_decode($request->data);
         DB::beginTransaction();
-        $details=[];
+        $details = [];
+        $total = 0;
         foreach($data as $product){
             $details[] = [
                 'product_id' => $product->id,
                 'price' => $product->price,
                 'quantity' => $product->quantity
             ];
+            $total += $product->quantity*$product->price;
         }
         try {
             $transaction=new Transaction();
@@ -68,6 +70,7 @@ class SaleController extends Controller
             if($request->type==1){
                 $transaction->detail_pay_id=$request->pay;
             }
+            $transaction->total=$total;
             $transaction->save();
             $transaction->details()->createMany($details);
             DB::commit();

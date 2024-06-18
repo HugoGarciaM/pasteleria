@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('transaction_id')->nullable(false);
             $table->unsignedBigInteger('product_id')->nullable(false);
             $table->integer('quantity')->nullable(false);
-            $table->integer('price')->nullable(false);
+            $table->double('price')->nullable(false);
 
             $table->foreign('transaction_id')->references('id')->on('transactions');
             $table->foreign('product_id')->references('id')->on('products');

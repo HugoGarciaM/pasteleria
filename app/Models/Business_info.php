@@ -14,6 +14,7 @@ class Business_info extends Model
     public $fillable=[
         'bank',
         'number_account',
-        'token'
+        'token',
+        'refund'
     ];
 }

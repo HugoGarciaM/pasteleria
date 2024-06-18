@@ -338,9 +338,9 @@ return [
         ],
         ['header' => 'ONLINE'],
         [
-            'text' => 'Cancelado',
+            'text' => 'Resagado',
             'icon_color' => 'red',
-            'url' => '#',
+            'route' => 'admin.sale.failed',
         ],
         [
             'text' => 'En Proceso',
