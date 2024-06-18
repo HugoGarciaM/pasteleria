@@ -76,28 +76,27 @@
             fetch('{{ route('personal.sale.genValide') }}' + '/' + id + '?' + 'customer=' + customer).
             then(response => response.json()).
             then(data => {
-                    document.getElementById('qr').src = "data:image/svg+xml;base64," + data.qrcode;
-                    const modal = new bootstrap.Modal(document.getElementById('mTransaction'));
-                    modal.show();
-                    interval = setInterval(() => {
-                            function() {
-                                fetch('{{ route('personal.sale.verifyTransaction') }}' + 'id=' + id).
-                                then(response => response.json()).
-                                then(data => {
-                                    if (data.message == 'ok') window.location.href =
-                                        '{{ route('admin.sale.inProcess') }}';
-                                });
-                            }, 3000);
-                    }).catch(error => Swal.fire({
-                    title: "mmmm...",
-                    text: "Parece que hubo un error: " + error,
-                    icon: "error"
-                }));
-            }
+                document.getElementById('qr').src = "data:image/svg+xml;base64," + data.qrcode;
+                const modal = new bootstrap.Modal(document.getElementById('mTransaction'));
+                modal.show();
+                interval = setInterval(() => {
+                    fetch('{{ route('personal.sale.verifyTransaction') }}' + 'id=' + id).
+                    then(response => response.json()).
+                    then(data => {
+                        if (data.message == 'ok') window.location.href =
+                            '{{ route('admin.sale.inProcess') }}';
+                    });
+                }, 3000);
+            }).catch(error => Swal.fire({
+                title: "mmmm...",
+                text: "Parece que hubo un error: " + error,
+                icon: "error"
+            }));
+        };
 
-            function closeTransaction() {
-                clearInterval(interval);
-                $('#mTransaction').modal('hide');
-            }
+        function closeTransaction() {
+            clearInterval(interval);
+            $('#mTransaction').modal('hide');
+        }
     </script>
 @endsection
