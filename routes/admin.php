@@ -30,6 +30,7 @@ Route::controller(DashboardController::class)->group(function(){
     Route::get('/sale','sale')->name('admin.sale');
     Route::get('/settings','settings')->name('admin.settings');
     Route::get('/sale/date','saleComplete')->name('admin.sale.date');
+    Route::get('/sale/inProcess','saleInProcess')->name('admin.sale.inProcess');
 });
 
 
@@ -64,6 +65,8 @@ Route::controller(SaleController::class)->group(function(){
     Route::post('/sale','register')->name('personal.sale.register');
     Route::get('/sale/pdf/{transaction}','showPayment')->name('personal.sale.pdf');
     Route::get('/sale/genPdf/{transaction}','receipt')->name('personal.sale.genPdf');
+    Route::get('/sale/genValide/{id?}','generateVerification')->name('personal.sale.genValide');
+    Route::get('/sale/verifyTransaction','verifyTransaction')->name('personal.sale.verifyTransaction');
 });
 
 

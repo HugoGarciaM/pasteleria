@@ -24,8 +24,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Auth::user()->role!=Role::CUSTOMERS ? redirect(route('admin')) : view('home');
+        // if($request['name']=='') $request['name']="null";
+        // if($request['category']=='' || $request['category']==0) $request['category']="null";
+        if($request->stat==null) $request['stat'] = 'available';
+        return Auth::user()->role!=Role::CUSTOMERS ? redirect(route('admin')) : view('home',[
+            'request' => $request
+        ]);
     }
 }

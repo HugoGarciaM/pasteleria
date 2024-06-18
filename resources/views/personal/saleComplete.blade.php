@@ -1,6 +1,5 @@
 @php
     use App\Models\Transaction;
-
     $transactions = Transaction::whereRaw('Date(created_at) = ?', date('Y-m-d'))
         ->where('seller', auth()->user()->id)
         ->paginate(10);
@@ -27,8 +26,8 @@
                     @foreach ($transactions as $transaction)
                         <tr>
                             <td>{{ $transaction->id }}</td>
-                            <td>{{ $transaction->_customer==null ? 'No Disponible' : $transaction->_customer->id}}</td>
-                            <td>{{ $transaction->_customer==null ? 'No Disponible' : $transaction->_customer->name}}</td>
+                            <td>{{ $transaction->_customer == null ? 'No Disponible' : $transaction->_customer->id }}</td>
+                            <td>{{ $transaction->_customer == null ? 'No Disponible' : $transaction->_customer->name }}</td>
                             <td>
                                 <a href="{{ route('personal.sale.pdf', $transaction->id) }}" class="btn btn-primary">
                                     <i class="fa fa-info"></i>

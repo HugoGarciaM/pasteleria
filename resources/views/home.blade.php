@@ -67,7 +67,7 @@
                                 <span class="form-check-label">Todo</span>
                             </div>
                             <div class="d-flex justify-content-end mt-1">
-                                <button class="btn btn-danger">Restablecer</button>
+                                <a href="{{route('home')}}" class="btn btn-danger">Restablecer</a>
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#t" type="submit">
                                     <i class="nf nf-fa-search"></i> Buscar</button>
                             </div>
@@ -138,32 +138,45 @@
     </div>
 
     <x-modal id="modalBasket" title="Canasta">
-        <div>
-            <table class="table table-striped" id="tableProduct" style="width: 100%;">
-                <thead>
-                    <th>Id</th>
-                    <th>producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Subtotal</th>
-                </thead>
-                <tbody>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3"></td>
-                        <td><b>Total:</b></td>
-                        <td id="total"></td>
-                        <td>Bs</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-        <div class="modal-footer">
-            <form method="post" action="#" id="formSale">
-                @csrf
-                <button onclick="sendSale()" class="btn btn-success"><i class="nf nf-md-qrcode"></i> Pagar</button>
-            </form>
+        <form action="{{ route('personal.sale.register') }}" method="post" id="formSale">
+            @csrf
+            <input type="number" class="d-none" id="type" name="type">
+            <input type="number" class="d-none" id="idq" name="pay">
+            <input type="number" class="d-none" name="ci" value="{{auth()->user()->person->ci}}">
+            <input type="text" class="d-none"  name="name" value="{{auth()->user()->person->name}}">
+            <input type="text" name="data" class="d-none" id="data">
+            <div id="part1" class="">
+                <div>
+                    <table class="table table-striped" id="tableProduct" style="width: 100%;">
+                        <thead>
+                            <th>Id</th>
+                            <th>producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Subtotal</th>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td><b>Total:</b></td>
+                                <td id="total"></td>
+                                <td>Bs</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <a onclick="online()" class="btn btn-success"><i class="nf nf-md-qrcode"></i> Pagar</a>
+                </div>
+            </div>
+        </form>
+        <div class="row justify-content-center d-none" id="part2">
+            <h3>Por favor espere, no cierre ni recargue la pagina...</h3>
+            <img src="" id="qr" style="width: 200px;">
+            <a onclick="saveQR()" class="btn btn-primary mt-1">guardar QR</a>
+            <a href="{{route('home')}}" class="btn btn-danger mt-1">Cancelar</a>
         </div>
     </x-modal>
 
@@ -194,6 +207,12 @@
 @section('js')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
+
+        var imgQR;
+        var interval;
+        var total = document.getElementById('total');
+        var idQr = null;
+        var idQr2 = null;
 
         @if ($stat == 'available')
             document.getElementById('available').checked = true;
@@ -299,10 +318,16 @@
             }
         }
 
+        function statusInput(id){
+            let element = document.getElementById(id);
+            element.disabled = element.disabled==true ? false : true;
+        }
+
+
         function sendSale() {
             let data = [];
             if (tableProduct.rows().data().toArray().length <= 0) {
-                return Swal.fire({
+                return window.Swal.fire({
                     title: "Vacio?...",
                     text: "Parece que la lista esta vacia!",
                     icon: "warning"
@@ -316,16 +341,100 @@
                 }
                 data.push(p)
             }
-            console.log(data);
             document.getElementById('data').value = JSON.stringify(data);
             let form = document.getElementById('formSale');
             form.submit();
         }
 
-        function statusInput(id){
-            let element = document.getElementById(id);
-            element.disabled = element.disabled==true ? false : true;
+        function online() {
+            {{-- console.log(); --}}
+            {{-- return; --}}
+            if (tableProduct.rows().data().length == 0) {
+                return window.Swal.fire({
+                    title: "Vacio?...",
+                    text: "Parece que la lista esta vacia!",
+                    icon: "warning"
+                });
+            }
+            document.getElementById('type').value = 1;
+            fetch('{{ route('paymentQR') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    quantity: parseInt(document.getElementById('total').textContent)
+                })
+            }).then(response => response.json()).
+            then(data => {
+                document.getElementById('part2').classList.remove('d-none');
+                document.getElementById('part1').classList.add('d-none');
+                document.getElementById('qr').src = "data:image/svg+xml;base64," + data.qrcode;
+                imgQR = data.qrcode;
+                idQr = data.id;
+                idQr2 = data.idq;
+                document.getElementById('idq').disabled = false;
+                document.getElementById('idq').value = idQr2;
+                console.log('el id es: ' + idQr);
+                inteval = setInterval(function() {
+                    fetch('{{ route('statusQR') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            id: idQr,
+                            idq: idQr2
+                        })
+                    }).then(response => response.json()).
+                    then(data => {
+                        console.log("el estado es: " + data.status + " " + data.message);
+                        if (data.status == true) {
+                            sendSale();
+                        }
+                    });
+                }, 3000);
+            }).catch(error => {
+                console.log('este es el error: ' + error);
+                window.Swal.fire({
+                    title: "Hubo...",
+                    text: "Parece que hubo un error",
+                    icon: "error"
+                })
+            });
         }
+
+        function saveQR(){
+            const imgBase64 = document.getElementById('qr').src;
+
+            // Convertir base64 a Blob
+            const byteString = atob(imgBase64.split(',')[1]);
+            const mimeString = imgBase64.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], {type: mimeString});
+
+            // Crear un enlace temporal
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'imagen.svg';
+
+            // Agregar el enlace temporal al DOM y hacer clic en él
+            document.body.appendChild(link);
+            link.click();
+
+            // Eliminar el enlace temporal del DOM
+            document.body.removeChild(link);
+
+            // Liberar el objeto URL
+            URL.revokeObjectURL(link.href);
+        }
+
     </script>
 @endsection
 

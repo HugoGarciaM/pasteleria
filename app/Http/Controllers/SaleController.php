@@ -6,14 +6,15 @@ use App\Enums\Role;
 use App\Enums\Status;
 use App\Enums\Type_transaction;
 use App\Http\Controllers\Controller;
+use App\Mail\ReceiptMail;
 use App\Models\Date;
 use App\Models\Person;
-use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class SaleController extends Controller
@@ -70,6 +71,33 @@ class SaleController extends Controller
             $transaction->save();
             $transaction->details()->createMany($details);
             DB::commit();
+            if($transaction->status == Status::ENABLE){
+                $qr=QrCode::generate($transaction->id);
+                $seller = isset($transaction->_seller->person->name) ? explode(' ',trim($transaction->_seller->person->name)) : null;
+                $quantity = sizeof($transaction->details);
+                $pdf = Pdf::setOptions([
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true]
+                )->loadView('pdf.receipt',[
+                    'id' => $transaction->id,
+                    'ci'=> isset($transaction->_customer->ci) ? $transaction->_customer->ci : null,
+                    'name' => isset($transaction->_customer->name) ? $transaction->_customer->name : null,
+                    'payment' => $transaction->type==Type_transaction::OFFLINE ? 'Efectivo' : 'QR',
+                    'seller' =>  $seller!=null ? $seller[0]." ".$seller[1][0]."." : "",
+                    'timestamps' => $transaction->created_at,
+                    'details' => $transaction->details,
+                    'qr' => $qr
+                ])->setPaper([
+                    0,
+                    0,
+                    226.77192,
+                    400+$quantity*30 //400 inc 30
+                ]);
+
+                $pdf->render();
+                Mail::to($request->user()->email)->send(new ReceiptMail('Pasteleria Pepita',$pdf->output()));
+                return redirect(route('payments'));
+            }
             return redirect(route('personal.sale.pdf',$transaction->id));
         } catch (\Exception $e) {
             DB::rollBack();
@@ -93,7 +121,7 @@ class SaleController extends Controller
             'ci'=> isset($transaction->_customer->ci) ? $transaction->_customer->ci : null,
             'name' => isset($transaction->_customer->name) ? $transaction->_customer->name : null,
             'payment' => $transaction->type==Type_transaction::OFFLINE ? 'Efectivo' : 'QR',
-            'seller' =>  $seller[0]." ".$seller[1][0].".",
+            'seller' =>  $seller!=null ? $seller[0]." ".$seller[1][0]."." : "",
             'timestamps' => $transaction->created_at,
             'details' => $transaction->details,
             'qr' => $qr
@@ -128,6 +156,34 @@ class SaleController extends Controller
                 'message'=>'Not Found'
             ],404) ;
         }
+    }
+
+    public function generateVerification(Request $request,$id){
+        $data = [
+            'id' => $id,
+            'customer' => $request->customer
+        ];
+        $qr = QrCode::generate(json_encode($data));
+        return response()->json(['qrcode'=>base64_encode($qr)],200);
+    }
+
+    public function verifyTransaction(Request $request){
+        $transaction = Transaction::find($request->id);
+        if($transaction==null) return response()->json(['message'=>'failled'],404);
+        if($transaction->status==Status::DISABLE)
+            return response()->json(['message'=>'ok'],200);
+        else
+            return response()->json(['message'=>'failled'],404);
+    }
+
+    public function desactiveTransaction(Request $request){
+        $transaction = Transaction::find($request->id);
+        if($transaction==null) return response()->json(['message'=>'failled'],404);
+        $transaction->status = Status::DISABLE;
+        if($transaction->save())
+            return response()->json(['message'=>'ok'],200);
+        else
+            return response()->json(['message'=>'failled'],404);
     }
 
 }

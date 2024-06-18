@@ -19,6 +19,14 @@ Route::get('/t', function(){
 });
 
 Route::middleware('auth')->prefix('admin')->group(base_path('routes/admin.php'));
-Route::post('/paymentQR',[PaymentController::class,'generateQR'])->middleware('auth')->name('paymentQR');
-Route::post('/statusQR',[PaymentController::class,'verifyQR'])->middleware('auth')->name('statusQR');
+Route::middleware('auth')->group(function(){
+    Route::post('/paymentQR',[PaymentController::class,'generateQR'])->name('paymentQR');
+    Route::post('/statusQR',[PaymentController::class,'verifyQR'])->name('statusQR');
+
+    Route::get('/payments/desactive',[SaleController::class,'desactiveTransaction'])->name('payments.desactive');
+
+    Route::get('/payments',function(){
+        return view('customerPayment');
+    })->name('payments');
+});
 ?>

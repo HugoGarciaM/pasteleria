@@ -57,4 +57,8 @@ class DashboardController extends Controller
     public function saleComplete(){
         return view('personal.saleComplete');
     }
+
+    public function saleInProcess(){
+        return view('personal.saleProcess');
+    }
 }

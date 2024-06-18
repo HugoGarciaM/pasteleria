@@ -336,7 +336,7 @@ return [
             'route' => 'admin.sale.date',
             'icon' => 'fa fa-list-ul',
         ],
-        ['header' => 'ESTADO PRODUCTO'],
+        ['header' => 'ONLINE'],
         [
             'text' => 'Cancelado',
             'icon_color' => 'red',
@@ -345,13 +345,13 @@ return [
         [
             'text' => 'En Proceso',
             'icon_color' => 'yellow',
-            'url' => '#',
+            'route' => 'admin.sale.inProcess',
         ],
-        [
-            'text' => 'Entregado',
-            'icon_color' => 'cyan',
-            'url' => '#',
-        ],
+        // [
+        //     'text' => 'Entregado',
+        //     'icon_color' => 'cyan',
+        //     'url' => '#',
+        // ],
         ['header'=>'ADMINISTRACION'],
         [
             "text"=>"Gestión",

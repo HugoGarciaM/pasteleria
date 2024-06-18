@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('dates', function (Blueprint $table) {
             $table->id();
-            $table->date('event_day')->unique(true)->default(new Expression('now()'));
+            // $table->date('event_day')->unique(true)->default(new Expression('now()'));
+            $table->date('event_day')->unique(true)->default(DB::raw('CURRENT_DATE'));
         });
     }
 

@@ -4,9 +4,6 @@
 @php
     use App\Models\Product;
     use App\Models\Date;
-    #$products=Product::all();
-    #$batch=Date::orderBy('id','desc')->first();
-    #$batch=Date::where('event_day',date('Y-m-d'))->first();
     $batch = Date::first() != null ? Date::first()->stockProducts(date('Y-m-d')) : null;
 @endphp
 @section('content_header')
@@ -73,22 +70,25 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="container d-grid" style="width: 13%;padding-right: 1px;  height: 300px;">
+                    <div class="container row" style="width: 13%;padding-right: 1px;  height: 300px;">
                         <a class="btn btn-success btn-lg" id="btnAdd" data-bs-toggle="modal"
                             onclick="searchSelect('selectProduct','idProduct',1)" data-bs-target="#addProduct">
-                            <i class="fa fa-plus"></i>
+                            <i class="fa fa-plus"></i><br>
                             Añadir
                         </a>
                         <a id="btnRemove" onclick="removeProduct()" class="btn btn-danger btn-lg">
-                            <i class="fa fa-trash"></i><br>
+                            <i class="fa fa-trash"></i>
+                            <br>
                             Quitar
                         </a>
                         <a id="btnFinish" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#payment">
                             <i class="fa fa-check"></i>
+                            <br>
                             Finalizar
                         </a>
                         <a id="btnCleanAll" href="" class="btn btn-secondary btn-lg">
                             <i class="fa fa-eraser"></i>
+                            <br>
                             limpiar
                         </a>
                     </div>
@@ -349,7 +349,7 @@
             }).catch(error => {
                 console.log('este es el error: ' + error);
                 Swal.fire({
-                    title: "Hubo...",
+                    title: "mmmmm...",
                     text: "Parece que hubo un error",
                     icon: "error"
                 })

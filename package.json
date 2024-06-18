@@ -18,7 +18,9 @@
     },
     "dependencies": {
         "datatables.net-dt": "^2.0.8",
+        "html5-qrcode": "^2.3.8",
         "jquery": "^3.7.1",
+        "stillat-blade-parser": "^2.0.1",
         "sweetalert2": "^11.10.8"
     }
 }
