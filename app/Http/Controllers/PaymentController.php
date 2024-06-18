@@ -20,7 +20,7 @@ class PaymentController extends Controller
         if($validator->fails()) return response(['message' => 'Error'],400);
         $info=Business_info::first();
         $client = new Client();
-        $api = 'http://localhost:8001/api/qr/generate';
+        $api = env('BANK_API').'/api/qr/generate';
         $options =[
             'headers' => [
                 'Authorization' => 'Bearer '.$info->token,
@@ -59,7 +59,7 @@ class PaymentController extends Controller
         if($validator->fails()) return response(['message' => 'Error: no se envio quantity'],400);
         $info=Business_info::first();
         $client = new Client();
-        $url='http://localhost:8001/api/qr/status';
+        $url=env('BANK_API').'/api/qr/status';
         $options =[
             'headers' => [
                 'Authorization' => 'Bearer '.$info->token,

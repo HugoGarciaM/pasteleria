@@ -19,7 +19,8 @@ class SettingsController extends Controller
     }
 
     public function testConectionBank(Request $request){
-        $url="http://localhost:8001/api/balance";
+        // $url="http://localhost:8001/api/balance";
+        $url = env('BANK_API')."/api/balance";
         $options =[
             'headers' => [
                 'Authorization' => 'Bearer '.$request->token,
