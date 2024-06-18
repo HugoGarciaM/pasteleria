@@ -22,6 +22,7 @@ class ProductDayController extends Controller
             'date' => 'unique:dates,event_day'
         ]);
         $batch = new Date();
+        $batch->event_day=date('Y-m-d');
         if($batch->save())
             return redirect(route('admin.batch'));
         else

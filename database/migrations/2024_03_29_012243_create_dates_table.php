@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('dates', function (Blueprint $table) {
             $table->id();
             // $table->date('event_day')->unique(true)->default(new Expression('now()'));
-            $table->date('event_day')->unique(true)->default(DB::raw('CURRENT_DATE'));
+            $table->date('event_day')->unique(true);
         });
     }
 
