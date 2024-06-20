@@ -34,7 +34,7 @@ $dailySalesBySeller = Detail_product::join('transactions', 'detail_products.tran
                     <h1 class="d-inline">
                         <i class="fa fa-wallet"></i>
                     </h1>
-                    <h3 class="d-inline">Total: {{$dailySalesBySeller->total_quantity}}</h3>
+                    <h3 class="d-inline">Total: {{$dailySalesBySeller!=null ? $dailySalesBySeller->total_quantity : 0}}</h3>
                 </div>
             </div>
 
@@ -43,7 +43,7 @@ $dailySalesBySeller = Detail_product::join('transactions', 'detail_products.tran
                     <h1 class="d-inline">
                         <i class="fa fa-cookie"></i>
                     </h1>
-                    <h3 class="d-inline">Cantidad: {{$dailySalesBySeller->total_revenue}}</h3>
+                    <h3 class="d-inline">Cantidad: {{$dailySalesBySeller!=null ? $dailySalesBySeller->total_revenue : 0}}</h3>
                 </div>
             </div>
         </div>
