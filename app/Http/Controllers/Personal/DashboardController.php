@@ -65,4 +65,8 @@ class DashboardController extends Controller
     public function saleFailed(){
         return view('personal.saleFailed');
     }
+    public function report(){
+        return redirect(route(''));
+        // return view('personal.admin.report');
+    }
 }

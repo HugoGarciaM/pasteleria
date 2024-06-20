@@ -5,6 +5,7 @@ use App\Http\Controllers\Personal\Admin\CategoryController;
 use App\Http\Controllers\Personal\Admin\EmployeeController;
 use App\Http\Controllers\Personal\Admin\ProductController;
 use App\Http\Controllers\Personal\Admin\ProductDayController;
+use App\Http\Controllers\Personal\Admin\ReportController;
 use App\Http\Controllers\Personal\Admin\SettingsController;
 use App\Http\Controllers\Personal\UserController;
 use App\Http\Controllers\SaleController;
@@ -32,7 +33,10 @@ Route::controller(DashboardController::class)->group(function(){
     Route::get('/sale/date','saleComplete')->name('admin.sale.date');
     Route::get('/sale/inProcess','saleInProcess')->name('admin.sale.inProcess');
     Route::get('/sale/failed','saleFailed')->name('admin.sale.failed');
+    // Route::get('/report','report')->name('admin.report');
 });
+
+Route::get('/report',[ReportController::class,'index'])->name('admin.report');
 
 
 Route::controller(CategoryController::class)->group(function(){
@@ -64,6 +68,7 @@ Route::controller(EmployeeController::class)->group(function(){
 
 Route::controller(SaleController::class)->group(function(){
     Route::post('/sale','register')->name('personal.sale.register');
+    Route::post('/sale/refund/{transaction}','refund')->name('personal.sale.refund');
     Route::get('/sale/pdf/{transaction}','showPayment')->name('personal.sale.pdf');
     Route::get('/sale/genPdf/{transaction}','receipt')->name('personal.sale.genPdf');
     Route::get('/sale/genValide/{id?}','generateVerification')->name('personal.sale.genValide');
@@ -78,7 +83,6 @@ Route::controller(UserController::class)->group(function(){
 Route::controller(SettingsController::class)->group(function(){
     Route::post('/settings/testBank','testConectionBank')->name('settings.testBank');
     Route::post('/settings/saveBank','saveBank')->name('settings.saveBank');
-    Route::post('/settings/refund','saveRefund')->name('settings.saveRefund');
 });
 
 ?>

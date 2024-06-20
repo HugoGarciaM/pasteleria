@@ -11,7 +11,7 @@ $info = Business_info::first();
 @section('content')
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title"><strong>Cuenta Bancaria</strong></h5>
+            <h5 class="card-title"><strong>Configuraciones</strong></h5>
             <form method="post" action="{{ route('settings.saveBank') }}">
                 @csrf
                 <div class="input-group">
@@ -26,27 +26,16 @@ $info = Business_info::first();
                     <span class="input-group-text">Token:</span>
                     <input type="text" class="form-control" name="token" id="token">
                 </div>
+                <div class="input-group">
+                    <span class="input-group-text">Pocentaje de Devolucion:</span>
+                    <input type="number" class="form-control" name="refund" value={{ $info!=null ? ($info->refund!=null ? $info->refund : 0) : 0}}>
+                    <span class="input-group-text">%</span>
+                </div>
                 <div class="btn-toolbar justify-content-end" style="margin-top: 5px;">
                     <div class="btn-group ">
                         <a class="btn btn-primary" onclick="test()">Probar Acceso</a>
                         <button type="submit" class="btn btn-success">Guardar</button>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title"><strong>Parametros</strong></h5>
-            <form action="{{route('settings.saveRefund')}}" method="post">
-                @csrf
-                <div class="input-group">
-                    <span class="input-group-text">Pocentaje de Devolucion:</span>
-                    <input type="number" class="form-control" name="refund" value={{$info->refund!=null ? $info->refund : 0}}>
-                    <span class="input-group-text">%</span>
-                </div>
-                <div class="mt-1 d-flex justify-content-end">
-                    <button type="submit" class="btn btn-success">Guardar</button>
                 </div>
             </form>
         </div>

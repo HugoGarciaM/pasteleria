@@ -380,7 +380,7 @@ return [
                 ],
                 [
                     "text"=>"Reporte",
-                    "url"=>"#",
+                    "route"=>"admin.report",
                     "icon"=>"fa fa-file-invoice-dollar"
                 ],
                 [

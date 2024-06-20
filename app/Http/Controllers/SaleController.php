@@ -7,6 +7,7 @@ use App\Enums\Status;
 use App\Enums\Type_transaction;
 use App\Http\Controllers\Controller;
 use App\Mail\ReceiptMail;
+use App\Models\Business_info;
 use App\Models\Date;
 use App\Models\Person;
 use App\Models\Transaction;
@@ -104,7 +105,7 @@ class SaleController extends Controller
             return redirect(route('personal.sale.pdf',$transaction->id));
         } catch (\Exception $e) {
             DB::rollBack();
-            return "hubo un error: ";
+            return "hubo un error: ".$e;
         }
     }
 
@@ -191,4 +192,13 @@ class SaleController extends Controller
             return response()->json(['message'=>'failled'],404);
     }
 
+    public function refund(Request $request,Transaction $transaction){
+        $info = Business_info::first();
+        $total = $transaction->total;
+        $total = $total - ($total * ($info->refund/100));
+        $transaction->total=$total;
+        $transaction->status=Status::FAILLED;
+        $transaction->save();
+        return redirect(route('admin.sale.failed'));
+    }
 }
