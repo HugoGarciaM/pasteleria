@@ -15,16 +15,16 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $p=new Person();
-        $p->ci=7329034;
-        $p->name='cristian abalos';
+        $p->ci=7381803;
+        $p->name='monzerrat arroyo';
         $p->save();
 
         $u=new User([
-            'person_ci'=>7329034,
+            'person_ci'=>7381803,
             // 'name'=>'cristian',
             // 'surname'=>'abalos',
             'role'=>1,
-            'email' => 'cristianmanuel007@gmail.com',
+            'email' => 'admin@pasteleria.com',
             'password'=>'12345678'
         ]);
         $u->save();

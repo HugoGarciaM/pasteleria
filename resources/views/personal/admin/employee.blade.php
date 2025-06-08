@@ -8,7 +8,7 @@
 @php
 use App\Models\User;
 use App\Enums\Role;
-$employees=User::whereBetween('role',[1,2])->paginate(10);
+$employees=User::whereBetween('role',[1,2,4])->paginate(10);
 $i=0;
 @endphp
 
@@ -40,8 +40,19 @@ $i=0;
                     <td>{{$employee->person_ci}}</td>
                     <td>{{$employee->person->name}}</td>
                     <td>{{$employee->email}}</td>
-                    <td>{{($employee->role == Role::ADMIN ? 'Gerente' : 'Personal')}}</td>
-                    <td><input type="checkbox" value="0" {{$employee->status!=1 ? 'checked' : ''}} onclick='return false'></td>
+                    <td>@switch($employee->role)
+                        @case(Role::ADMIN)
+                            gerente
+                            @break
+                        @case(Role::PERSONAL)
+                            Personal
+                            @break 
+                        @case(ROle::DELIVERY)
+                            delivery
+                            @break
+                        @default 
+                        Otro 
+                     @endswitch
                     <td>
                         <div>
                             <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#modalCreate" onclick="typeForm('form-employee','tr{{$i-1}}',{{$employee->id}})">Editar</button>
@@ -81,6 +92,7 @@ $i=0;
             <select class="form-select" name="role" id="role">
                 <option value="2" selected >Personal</option>
                 <option value="1">Gerente</option>
+                <option value="4">Delivery</option>
             </select>
         </div>
         <div class="input-group" id="div-password">
@@ -179,14 +191,18 @@ function typeForm(id,r=null,idu){
         let v=['ci','name','email','role','status'];
         for(i=0;i<cells.length-1;i++){
             if(i==3)
-                document.getElementById(v[i]).value=cells[i].textContent==='Gerente' ? 1 : 2;
-            else if(i==4)
-                document.getElementById(v[i]).checked=cells[i].textContent=='Activo' ? true : false;
-            else
-                document.getElementById(v[i]).value=cells[i].textContent;
-        }
-        form.action="{{route('admin.employee.update','')}}"+"/"+idu;
+            let roleText = cells[3].textContent.trim().toLowerCase();
+                if (roleText === 'gerente') {    
+                document.getElementById('role').value = 1;
+            } else if (roleText === 'personal') {
+                document.getElementById('role').value = 2;
+            } else if (roleText === 'delivery') {
+                document.getElementById('role').value = 4;
+            }
+            document.getElementById('status').checked = !cells[4].classList.contains('text-danger');
+        }    
     }
+    form.action = "{{ url('admin/employee/update') }}/" + idu;
 }
 </script>
 
