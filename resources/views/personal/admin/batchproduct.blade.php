@@ -1,4 +1,4 @@
-@extends('adminlte::page')
+@++++extends('adminlte::page')
 @section('title','Lotes')
 
 @section('content_header')
@@ -23,7 +23,7 @@ use App\Models\Product;
 $dates=Date::orderBy('event_day','desc')->paginate(10);
 $products=Product::where('status',1)->get();
 @endphp
-
+*
 @foreach ($dates as $day)
 
 
