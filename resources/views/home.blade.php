@@ -167,6 +167,8 @@
                         </tfoot>
                     </table>
                 </div>
+                <h5>Seleccione Ubicacion de Entrega:</h5>
+                <div style="height: 400px;" id="map"></div>
                 <div class="modal-footer">
                     <a onclick="online()" class="btn btn-success"><i class="nf nf-md-qrcode"></i> Pagar</a>
                 </div>
@@ -205,6 +207,9 @@
 @endsection
 
 @section('js')
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
 
@@ -213,6 +218,20 @@
         var total = document.getElementById('total');
         var idQr = null;
         var idQr2 = null;
+
+        var map = L.map('map').setView([-17.96, -67.116],13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        var marker = null;
+        var latlng = null;
+        function getLatLong(e){
+            if (marker != null) marker.remove();
+            latlng = e.latlng;
+            marker = L.marker([latlng.lat, latlng.lng]).addTo(map);
+        }
+        map.on('click',getLatLong);
 
         @if ($stat == 'available')
             document.getElementById('available').checked = true;
@@ -252,8 +271,13 @@
 
             document.getElementById('tableProduct_info').classList.add('d-none');
             const modal = new bootstrap.Modal(document.getElementById('modalBasket'));
+
             Basket.addEventListener('click', () => {
                 modal.show();
+            });
+            const myModal = document.getElementById('modalBasket');
+            myModal.addEventListener('shown.bs.modal', function () {
+                map.invalidateSize(); // 'map' es la instancia de tu Leaflet
             });
 
             @if (session('status'))
@@ -440,11 +464,12 @@
 @endsection
 
 @section('css')
-    <style>
-        .product {
-            height: 450px;
-            {{-- width: 25%; --}} margin: 3px;
-        }
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+.product {
+    height: 450px;
+    {{-- width: 25%; --}} margin: 3px;
+}
 
         .scrollable-paragraph {
             height: 180px;
@@ -490,5 +515,5 @@
                 max-width: 50%;
             }
         }
-    </style>
+</style>
 @endsection
