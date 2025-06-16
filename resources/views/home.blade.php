@@ -145,6 +145,8 @@
             <input type="number" class="d-none" name="ci" value="{{auth()->user()->person->ci}}">
             <input type="text" class="d-none"  name="name" value="{{auth()->user()->person->name}}">
             <input type="text" name="data" class="d-none" id="data">
+            <input type="number" name="lat" class="d-none" id="lat">
+            <input type="number" name="long" class="d-none" id="long">
             <div id="part1" class="">
                 <div>
                     <table class="table table-striped" id="tableProduct" style="width: 100%;">
@@ -366,6 +368,9 @@
                 data.push(p)
             }
             document.getElementById('data').value = JSON.stringify(data);
+            if(latlng == null) return alert('Porfavor Seleccione una ubicación de entrega');
+            document.getElementById('lat').value = latlng.lat;
+            document.getElementById('long').value = latlng.long;
             let form = document.getElementById('formSale');
             form.submit();
         }
@@ -380,6 +385,7 @@
                     icon: "warning"
                 });
             }
+            if(latlng == null) return alert('Porfavor Seleccione una ubicación de entrega');
             document.getElementById('type').value = 1;
             fetch('{{ route('paymentQR') }}', {
                 method: 'POST',

@@ -72,6 +72,8 @@ class SaleController extends Controller
                 $transaction->detail_pay_id=$request->pay;
             }
             $transaction->total=$total;
+            $transaction->lat = $request->lat;
+            $transaction->long = $request->long;
             $transaction->save();
             $transaction->details()->createMany($details);
             DB::commit();
