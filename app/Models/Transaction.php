@@ -19,6 +19,10 @@ class Transaction extends Model
         return $this->belongsTo(User::class,'seller','id');
     }
 
+    public function _delivery(){
+        return $this->belongsTo(User::class,'delivery','id');
+    }
+
     public function details(){
         return $this->hasMany(Detail_product::class);
     }
