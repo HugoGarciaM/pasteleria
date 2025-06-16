@@ -201,4 +201,11 @@ class SaleController extends Controller
         $transaction->save();
         return redirect(route('admin.sale.failed'));
     }
+
+    public function assignDelivery(Request $request){
+        $transaction = Transaction::find($request->id_transaction);
+        $transaction->delivery = $request->id_delivery;
+        $transaction->save();
+        return route('admin.sale.inProcess');
+    }
 }

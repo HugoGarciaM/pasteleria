@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Personal;
 
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -59,7 +60,8 @@ class DashboardController extends Controller
     }
 
     public function saleInProcess(){
-        return view('personal.saleProcess');
+        $deliveries = User::where('role',4)->get();
+        return view('personal.saleProcess',compact(['deliveries']));
     }
 
     public function saleFailed(){

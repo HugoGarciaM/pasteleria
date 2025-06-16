@@ -73,6 +73,7 @@ Route::controller(SaleController::class)->group(function(){
     Route::get('/sale/genPdf/{transaction}','receipt')->name('personal.sale.genPdf');
     Route::get('/sale/genValide/{id?}','generateVerification')->name('personal.sale.genValide');
     Route::get('/sale/verifyTransaction','verifyTransaction')->name('personal.sale.verifyTransaction');
+    Route::post('/sale/assignDelivery','assignDelivery')->name('personal.sale.assignDelivery');
 });
 
 
